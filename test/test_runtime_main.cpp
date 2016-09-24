@@ -40,15 +40,6 @@ class TestRuntime : public forth::Runtime
       return m_program;
     }
 
-    void
-    TestSetIp(
-      size_t a_ipLine,
-      size_t a_ipCol)
-    {
-      m_ipLine = a_ipLine;
-      m_ipCol = a_ipCol;
-    }
-
     size_t
     TestGetIpLine() const
     {
@@ -182,7 +173,7 @@ BOOST_AUTO_TEST_CASE(Running)
     TestRuntime::kOpCodeFirstUser,
     TestRuntime::kOpCodePlus);
 
-  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+  forth.ResetIp();
   forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
   forth.ComputeStep();
@@ -207,7 +198,7 @@ BOOST_AUTO_TEST_CASE(Calling)
     TestRuntime::kOpCodeFirstUser + 1,
     TestRuntime::kOpCodePlus);
 
-  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+  forth.ResetIp();
   forth.ComputeStep();
   forth.ComputeStep();
   forth.ComputeStep();
@@ -295,7 +286,7 @@ BOOST_AUTO_TEST_CASE(Looping)
     TestRuntime::kOpCodeFirstUser + 1,
     TestRuntime::kOpCodeLoop);
 
-  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+  forth.ResetIp();
 
   // After 4 + 7 * ( 2 + 1 + 2 + 2 + 1 + 2 + 2) = 88 operations we should be
   // done
@@ -363,7 +354,7 @@ BOOST_AUTO_TEST_CASE(If)
     TestRuntime::kOpCodeFirstUser + 2,
     TestRuntime::kOpCodePlus);
 
-  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+  forth.ResetIp();
 
   // After 9 steps, we should be in line 22
   for (unsigned i = 0; i < 9; ++i)
