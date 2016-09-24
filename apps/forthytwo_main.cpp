@@ -52,15 +52,20 @@ int main( int argc, char * * argv)
   forth::Runtime forth;
   try
   {
-  forth::Parser::ParseFromFile( inputFileName, forth);
+    forth::Parser::ParseFromFile( inputFileName, forth);
+    forth.SetFileName( inputFileName);
+    for (; ; )
+    {
+      forth.ComputeStep();
+    }
   }
   catch (const std::exception & ex)
   {
-    std::cerr << "forthytwo:" << ex.what() << std::endl;
+    std::cerr << ex.what() << std::endl;
   }
   catch( ...)
   {
-    std::cerr << "forthytwo: Unknown exception caught" << std::endl;
+    std::cerr << "Unknown exception caught" << std::endl;
   }
 
   return EXIT_SUCCESS;
