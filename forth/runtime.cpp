@@ -1,5 +1,7 @@
 #include "runtime.hpp"
 
+#include <iostream>
+
 namespace forth
 {
   const Runtime::Cell Runtime::kOpCodePlus = 0;
@@ -10,10 +12,19 @@ namespace forth
   const Runtime::Cell Runtime::kOpCodeAnd = 5;
   const Runtime::Cell Runtime::kOpCodeOr = 6;
   const Runtime::Cell Runtime::kOpCodeNot = 7;
-  const Runtime::Cell Runtime::kOpCodeLoop = 8;
-  const Runtime::Cell Runtime::kOpCodeIf = 9;
-  const Runtime::Cell Runtime::kOpCodeIfElse = 10;
-  const Runtime::Cell Runtime::kOpCodeEmit = 12;
+
+  const Runtime::Cell Runtime::kOpCodeSwap = 8;
+  const Runtime::Cell Runtime::kOpCodeDup = 9;
+  const Runtime::Cell Runtime::kOpCodeDrop = 10;
+
+  const Runtime::Cell Runtime::kOpCodeLoop = 11;
+  const Runtime::Cell Runtime::kOpCodeIf = 12;
+  const Runtime::Cell Runtime::kOpCodeIfElse = 13;
+
+  const Runtime::Cell Runtime::kOpCodeEmit = 15;
+  const Runtime::Cell Runtime::kOpCodeRead = 16;
+
+  const Runtime::Cell Runtime::kOpCodeExit = 17;
 
   const Runtime::Cell Runtime::kOpCodeFirstUser = 21;
 
@@ -29,14 +40,18 @@ namespace forth
     IntrAnd,
     IntrOr,
     IntrNot,
+
+    IntrSwap,
+    IntrDup,
+    IntrDrop,
+
     IntrLoop,
     IntrIf,
     IntrIfElse,
+
     IntrEmit,
-    IntrExit,
-    IntrExit,
-    IntrExit,
-    IntrExit,
+    IntrRead,
+
     IntrExit,
     IntrExit,
     IntrExit,
@@ -59,7 +74,10 @@ namespace forth
     Cell a_data)
   {
     if ( a_data == kOpCodeCall)
-      DoOpcode();
+    {
+      Cell opCode = PopData();
+      DoOpcode( opCode);
+    }
     else
       m_dataStack.push_back( a_data);
   }
@@ -67,7 +85,7 @@ namespace forth
   Runtime::Cell
   Runtime::PopData()
   {
-    if( m_dataStack.empty())
+    if ( m_dataStack.empty())
       throw StackUnderflow( "PopData");
 
     Cell res = m_dataStack.back();
@@ -86,7 +104,7 @@ namespace forth
   Runtime::Cell
   Runtime::PopReturn()
   {
-    if( m_returnStack.empty())
+    if ( m_returnStack.empty())
       throw StackUnderflow( "PopReturn");
 
     Cell res = m_returnStack.back();
@@ -109,19 +127,21 @@ namespace forth
   }
 
   void
-  Runtime::DoOpcode()
+  Runtime::DoOpcode(
+    Cell a_opCode)
   {
-    Cell opCode = PopData();
-
-    if (opCode < kOpCodeFirstUser)
-      kIntrinsics[ opCode]( *this);
-    else
+    if (a_opCode >= 0)
     {
-      PushReturn( m_ipLine);
-      PushReturn( m_ipCol);
+      if (a_opCode < kOpCodeFirstUser)
+        kIntrinsics[ a_opCode]( *this);
+      else
+      {
+        PushReturn( m_ipLine);
+        PushReturn( m_ipCol);
 
-      m_ipLine = opCode;
-      m_ipCol = 0;
+        m_ipLine = a_opCode;
+        m_ipCol = 0;
+      }
     }
   }
 
@@ -231,33 +251,100 @@ namespace forth
   }
 
   void
+  Runtime::IntrSwap(
+    Runtime &a_forth)
+  {
+    if ( a_forth.m_dataStack.size() < 2)
+      throw StackUnderflow( "Swap");
+    size_t tos1 = a_forth.m_dataStack.size() - 2;
+    std::swap( a_forth.m_dataStack[tos1], a_forth.m_dataStack[tos1 + 1]);
+  }
+
+  void
+  Runtime::IntrDup(
+    Runtime &a_forth)
+  {
+    if ( a_forth.m_dataStack.size() == 0)
+      throw StackUnderflow( "Dup");
+    size_t tos = a_forth.m_dataStack.size() - 1;
+    a_forth.PushData( a_forth.m_dataStack[tos]);
+  }
+
+  void
+  Runtime::IntrDrop(
+    Runtime &a_forth)
+  {
+    a_forth.PopData();
+  }
+
+  void
   Runtime::IntrLoop(
     Runtime &a_forth)
   {
+    if ( a_forth.m_dataStack.size() == 0)
+      throw StackUnderflow( "Dup");
+    size_t tos = a_forth.m_dataStack.size() - 1;
+    Cell v = a_forth.m_dataStack[tos];
+    if (v == 0)
+    {
+      a_forth.PopData();
+    }
+    else
+    {
+      a_forth.m_ipCol = 0;
+    }
   }
 
   void
   Runtime::IntrIf(
     Runtime &a_forth)
   {
+    Cell opCode = a_forth.PopData();
+    Cell cond = a_forth.PopData();
+
+    if (cond != 0)
+      a_forth.DoOpcode( opCode);
   }
 
   void
   Runtime::IntrIfElse(
     Runtime &a_forth)
   {
+    Cell opCodeNo = a_forth.PopData();
+    Cell opCodeYes = a_forth.PopData();
+    Cell cond = a_forth.PopData();
+
+    a_forth.DoOpcode( (cond != 0) ? opCodeYes : opCodeNo);
   }
 
   void
   Runtime::IntrEmit(
     Runtime &a_forth)
   {
+    Cell v = a_forth.PopData();
+
+    if (0 <= v && v < 255)
+      std::cout << char(v);
+  }
+
+  void
+  Runtime::IntrRead(
+    Runtime &a_forth)
+  {
+    char c;
+    std::cin >> c;
+
+    // We can't use PushData here or every * will trigger something
+    a_forth.m_dataStack.push_back( c);
   }
 
   void
   Runtime::IntrExit(
     Runtime &a_forth)
   {
+    Cell v = a_forth.PopData();
+
+    exit( v);
   }
 
 }

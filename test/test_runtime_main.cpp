@@ -15,6 +15,13 @@ class TestRuntime : public forth::Runtime
       return m_dataStack.size();
     }
 
+    Cell
+    TestDataStackAt(
+      size_t a_ind) const
+    {
+      return m_dataStack[a_ind];
+    }
+
     size_t
     TestReturnStackSize() const
     {
@@ -40,6 +47,18 @@ class TestRuntime : public forth::Runtime
     {
       m_ipLine = a_ipLine;
       m_ipCol = a_ipCol;
+    }
+
+    size_t
+    TestGetIpLine() const
+    {
+      return m_ipLine;
+    }
+
+    size_t
+    TestGetIpCol() const
+    {
+      return m_ipCol;
     }
 };
 
@@ -93,6 +112,16 @@ TestIntrinsic1(
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 0);
 }
 
+static void
+TestCompileCall(
+  TestRuntime &     a_forth,
+  size_t            a_line,
+  TestRuntime::Cell a_opCode)
+{
+  a_forth.Compile( a_line, a_opCode);
+  a_forth.Compile( a_line, TestRuntime::kOpCodeCall);
+}
+
 BOOST_AUTO_TEST_CASE(Intrinsics)
 {
   TestIntrinsic2( 2, 3, TestRuntime::kOpCodePlus, 5);
@@ -125,8 +154,9 @@ BOOST_AUTO_TEST_CASE(Compiler)
 
   forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
   forth.Compile( TestRuntime::kOpCodeFirstUser, 3);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, TestRuntime::kOpCodePlus);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, TestRuntime::kOpCodeCall);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodePlus);
 
   const std::vector< std::vector< TestRuntime::Cell > > &prg =
     forth.TestGetProgram();
@@ -147,8 +177,10 @@ BOOST_AUTO_TEST_CASE(Running)
 
   forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
   forth.Compile( TestRuntime::kOpCodeFirstUser, 3);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, TestRuntime::kOpCodePlus);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, TestRuntime::kOpCodeCall);
+
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodePlus);
 
   forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
   forth.ComputeStep();
@@ -165,14 +197,15 @@ BOOST_AUTO_TEST_CASE(Calling)
 {
   TestRuntime forth;
 
-  forth.Compile( TestRuntime::kOpCodeFirstUser,
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
     TestRuntime::kOpCodeFirstUser + 1);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, TestRuntime::kOpCodeCall);
 
   forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 2);
   forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 3);
-  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, TestRuntime::kOpCodePlus);
-  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, TestRuntime::kOpCodeCall);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodePlus);
 
   forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
   forth.ComputeStep();
@@ -182,4 +215,176 @@ BOOST_AUTO_TEST_CASE(Calling)
   forth.ComputeStep();
   forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(Swap)
+{
+  TestRuntime forth;
+
+  forth.PushData( 2);
+  forth.PushData( 3);
+
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 0), 2);
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 3);
+
+  forth.PushData( TestRuntime::kOpCodeSwap);
+  forth.PushData( TestRuntime::kOpCodeCall);
+
+  BOOST_REQUIRE_EQUAL( forth.TestDataStackSize(), 2);
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 0), 3);
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 2);
+}
+
+BOOST_AUTO_TEST_CASE(Dup)
+{
+  TestRuntime forth;
+
+  forth.PushData( 2);
+
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 0), 2);
+
+  forth.PushData( TestRuntime::kOpCodeDup);
+  forth.PushData( TestRuntime::kOpCodeCall);
+
+  BOOST_REQUIRE_EQUAL( forth.TestDataStackSize(), 2);
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 0), 2);
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 2);
+}
+
+BOOST_AUTO_TEST_CASE(Dropt)
+{
+  TestRuntime forth;
+
+  forth.PushData( 2);
+
+  BOOST_CHECK_EQUAL( forth.TestDataStackAt( 0), 2);
+
+  forth.PushData( TestRuntime::kOpCodeDrop);
+  forth.PushData( TestRuntime::kOpCodeCall);
+
+  BOOST_REQUIRE_EQUAL( forth.TestDataStackSize(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(Looping)
+{
+  TestRuntime forth;
+
+  // 21: 5 7 22 call
+  forth.Compile( TestRuntime::kOpCodeFirstUser, 5);
+  forth.Compile( TestRuntime::kOpCodeFirstUser, 7);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeFirstUser + 1);
+
+  // 22: swap 4 + swap 1 - loop
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodeSwap);
+  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 4);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodePlus);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodeSwap);
+  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 1);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodeMinus);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodeLoop);
+
+  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+
+  // After 4 + 7 * ( 2 + 1 + 2 + 2 + 1 + 2 + 2) = 88 operations we should be
+  // done
+  for (unsigned i = 0; i < 88; ++i)
+    forth.ComputeStep();
+
+  BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 5 + 7 * 4);
+}
+
+BOOST_AUTO_TEST_CASE(If)
+{
+  TestRuntime forth;
+
+  // We run the following program
+  // 21: 5 dup 2 mod 22 if dup 2 mod 23 22 ifElse
+  // 22: 1 +
+  // 23: 2 +
+
+  // The if will enter line 22 because 5 % 2 = 1 -> true
+  // Line 22 will increment TOS to 6
+  // The ifElse will enter line 23 because 6 % 2 = -> false
+  // Line 23 will increment TOS to 8
+
+  // 21
+  forth.Compile( TestRuntime::kOpCodeFirstUser, 5);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeDup);
+  forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeMod);
+  forth.Compile( TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeFirstUser + 1);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeIf);
+
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeDup);
+  forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeMod);
+
+  forth.Compile( TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeFirstUser + 1);
+  forth.Compile( TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeFirstUser + 2);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser,
+    TestRuntime::kOpCodeIfElse);
+
+  // 22
+  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 1);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 1,
+    TestRuntime::kOpCodePlus);
+
+  // 23
+  forth.Compile( TestRuntime::kOpCodeFirstUser + 2, 2);
+  TestCompileCall( forth,
+    TestRuntime::kOpCodeFirstUser + 2,
+    TestRuntime::kOpCodePlus);
+
+  forth.TestSetIp( TestRuntime::kOpCodeFirstUser, 0);
+
+  // After 9 steps, we should be in line 22
+  for (unsigned i = 0; i < 9; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser + 1);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
+
+  // 13 steps later, we should be in line 23
+  for (unsigned i = 0; i < 13; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser + 2);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
+
+  // Four more steps and we are at the end.
+  for (unsigned i = 0; i < 4; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 18);
+
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }

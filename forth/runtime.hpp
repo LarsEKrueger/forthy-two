@@ -22,10 +22,19 @@ namespace forth
       static const Cell kOpCodeAnd;
       static const Cell kOpCodeOr;
       static const Cell kOpCodeNot;
+
+      static const Cell kOpCodeSwap;
+      static const Cell kOpCodeDup;
+      static const Cell kOpCodeDrop;
+
       static const Cell kOpCodeLoop;
       static const Cell kOpCodeIf;
       static const Cell kOpCodeIfElse;
+
       static const Cell kOpCodeEmit;
+      static const Cell kOpCodeRead;
+
+      static const Cell kOpCodeExit;
 
       static const Cell kOpCodeFirstUser;
 
@@ -66,7 +75,8 @@ namespace forth
       Cell PopData();
       Cell PopReturn();
 
-      void DoOpcode();
+      void DoOpcode(
+        Cell a_opCode);
 
       typedef void (* Intrinsic)(
         Runtime &);
@@ -89,14 +99,26 @@ namespace forth
         Runtime &a_forth);
       static void IntrNot(
         Runtime &a_forth);
+
+      static void IntrSwap(
+        Runtime &a_forth);
+      static void IntrDup(
+        Runtime &a_forth);
+      static void IntrDrop(
+        Runtime &a_forth);
+
       static void IntrLoop(
         Runtime &a_forth);
       static void IntrIf(
         Runtime &a_forth);
       static void IntrIfElse(
         Runtime &a_forth);
+
       static void IntrEmit(
         Runtime &a_forth);
+      static void IntrRead(
+        Runtime &a_forth);
+
       static void IntrExit(
         Runtime &a_forth);
 
