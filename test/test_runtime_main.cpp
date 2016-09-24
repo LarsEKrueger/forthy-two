@@ -52,7 +52,34 @@ class TestRuntime : public forth::Runtime
     {
       return m_ipCol;
     }
+
+    static void
+      CheckIndices()
+      {
+        BOOST_CHECK( kIntrinsics[kOpCodePlus] == &IntrPlus);
+        BOOST_CHECK( kIntrinsics[kOpCodeMinus] == &IntrMinus);
+        BOOST_CHECK( kIntrinsics[kOpCodeMult] == &IntrMult);
+        BOOST_CHECK( kIntrinsics[kOpCodeDiv] == &IntrDiv);
+        BOOST_CHECK( kIntrinsics[kOpCodeMod] == &IntrMod);
+        BOOST_CHECK( kIntrinsics[kOpCodeAnd] == &IntrAnd);
+        BOOST_CHECK( kIntrinsics[kOpCodeOr] == &IntrOr);
+        BOOST_CHECK( kIntrinsics[kOpCodeNot] == &IntrNot);
+        BOOST_CHECK( kIntrinsics[kOpCodeSwap] == &IntrSwap);
+        BOOST_CHECK( kIntrinsics[kOpCodeDup] == &IntrDup);
+        BOOST_CHECK( kIntrinsics[kOpCodeDrop] == &IntrDrop);
+        BOOST_CHECK( kIntrinsics[kOpCodeLoop] == &IntrLoop);
+        BOOST_CHECK( kIntrinsics[kOpCodeIf] == &IntrIf);
+        BOOST_CHECK( kIntrinsics[kOpCodeIfElse] == &IntrIfElse);
+        BOOST_CHECK( kIntrinsics[kOpCodeEmit] == &IntrEmit);
+        BOOST_CHECK( kIntrinsics[kOpCodeRead] == &IntrRead);
+        BOOST_CHECK( kIntrinsics[kOpCodeExit] == &IntrExit);
+      }
 };
+
+BOOST_AUTO_TEST_CASE(OpCodeIndices)
+{
+  TestRuntime::CheckIndices();
+}
 
 BOOST_AUTO_TEST_CASE(Basics)
 {
@@ -303,7 +330,7 @@ BOOST_AUTO_TEST_CASE(If)
   TestRuntime forth;
 
   // We run the following program
-  // 21: 5 dup 2 mod 22 if dup 2 mod 23 22 ifElse
+  // 21: 5 dup 2 mod 22 if dup 2 mod 22 23 ifElse
   // 22: 1 +
   // 23: 2 +
 
@@ -404,13 +431,13 @@ BOOST_AUTO_TEST_CASE(ParseOk)
   std::stringstream file;
 
   // Add the header
-  for (unsigned i = 0; i < TestRuntime::kOpCodeFirstUser; ++i)
+  for (unsigned i = 1; i < TestRuntime::kOpCodeFirstUser; ++i)
     file << std::endl;
 
   // Add the program
-  // 21: 5 dup 2 mod 22 if dup 2 mod 23 22 ifElse
+  // 21: 5 dup 2 mod 22 if dup 2 mod 22 23 ifElse
   file << "5  9 42  2  4 42  22  12 42  9 42  2  4 42  22  23  13 42" <<
-  std::endl;
+    std::endl;
   // 22: 1 +
   file << "1 0 42" << std::endl;
   // 23: 2 +
@@ -463,7 +490,7 @@ BOOST_AUTO_TEST_CASE(ParseFail)
   std::stringstream file;
 
   // Add the header
-  for (unsigned i = 0; i < TestRuntime::kOpCodeFirstUser; ++i)
+  for (unsigned i = 1; i < TestRuntime::kOpCodeFirstUser; ++i)
     file << std::endl;
 
   // Add the program
@@ -478,7 +505,7 @@ BOOST_AUTO_TEST_CASE(ParseFail)
   }
   catch ( forth::Parser::ParseError ex)
   {
-    BOOST_REQUIRE_EQUAL( ex.what(), "file:21 not a number at 'xx 9 '");
+    BOOST_REQUIRE_EQUAL( ex.what(), "file(21): not a number at 'xx 9 '");
     hasCaughtTheRightException = true;
   }
   catch (...)

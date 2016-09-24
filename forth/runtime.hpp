@@ -68,9 +68,14 @@ namespace forth
 
       void ComputeStep();
 
+      void SetFileName(
+        const char * a_filename);
+
     protected:
       std::vector<Cell> m_returnStack;
       std::vector<Cell> m_dataStack;
+
+      std::string m_filename;
 
       std::vector< std::vector< Cell> > m_program;
 

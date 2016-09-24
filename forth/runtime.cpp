@@ -1,6 +1,7 @@
 #include "runtime.hpp"
 
 #include <iostream>
+#include <sstream>
 
 namespace forth
 {
@@ -21,10 +22,10 @@ namespace forth
   const Runtime::Cell Runtime::kOpCodeIf = 12;
   const Runtime::Cell Runtime::kOpCodeIfElse = 13;
 
-  const Runtime::Cell Runtime::kOpCodeEmit = 15;
-  const Runtime::Cell Runtime::kOpCodeRead = 16;
+  const Runtime::Cell Runtime::kOpCodeEmit = 14;
+  const Runtime::Cell Runtime::kOpCodeRead = 15;
 
-  const Runtime::Cell Runtime::kOpCodeExit = 17;
+  const Runtime::Cell Runtime::kOpCodeExit = 16;
 
   const Runtime::Cell Runtime::kOpCodeFirstUser = 21;
 
@@ -105,7 +106,11 @@ namespace forth
   Runtime::PopReturn()
   {
     if ( m_returnStack.empty())
-      throw StackUnderflow( "PopReturn");
+    {
+      std::ostringstream str;
+      str << m_filename << "(" << m_ipLine << "): return stack underflow";
+      throw StackUnderflow( str.str().c_str());
+    }
 
     Cell res = m_returnStack.back();
 
@@ -355,4 +360,10 @@ namespace forth
     exit( v);
   }
 
+  void
+  Runtime::SetFileName(
+    const char * a_filename)
+  {
+    m_filename = a_filename;
+  }
 }

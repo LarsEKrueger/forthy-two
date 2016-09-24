@@ -45,8 +45,8 @@ namespace forth
 
         line.read( nextChars, CHARS_IN_ERROR);
         std::ostringstream str;
-        str << a_filename << ":" << a_lineNo << " not a number at '" <<
-        nextChars << "'";
+        str << a_filename << "(" << a_lineNo << "): not a number at '" <<
+          nextChars << "'";
         throw ParseError( str.str().c_str());
       }
       a_runtime.Compile( a_lineNo, v);
@@ -59,7 +59,7 @@ namespace forth
     std::istream &a_input,
     Runtime &a_runtime)
   {
-    size_t lineNo = 0;
+    size_t lineNo = 1;
 
     while ( !a_input.eof())
     {
