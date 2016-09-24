@@ -1,0 +1,61 @@
+        99 bottles
+        Example program in forthytwo.
+
+        Run this as:
+        forthytwo bottles.42
+
+        Look down! The actual program starts at line 21.
+
+
+        The template is:
+        <n> green bottles hanging on the wall
+        <n> green bottles hanging on the wall
+        And if one green bottle should accidentally fall,
+        There'll be <n-1> green bottles hanging on the wall.
+        <empty line>
+
+
+
+
+
+99 61 42               27 42  0 16 42
+
+# Helper: Print a non-zero character
+9 42   14 12 42
+
+# Helper: Print a line break
+13 14 42 10 14 42
+
+# Helper: Print a zero-terminated string
+24 42 11 42
+
+# Helper: Put a digit as a character on the stack
+# dup 10 mod 48 + swap 10 div
+9 42  10  4 42  48  0 42  8 42  10  3 42
+
+# Helper: Print a decimal number
+0 8 42 39 42 30 42
+# Helper: Loop line 34 until the number is 0
+34 42 11 42
+
+
+# Helper: Print the first line
+9 42  37 42 0 108 108 97 119 32 101 104 116 32 110 111 32 103 110 105 103 110 97 104 32 115 101 108 116 116 111 98 32 110 101 101 114 103 32 30 42 27 42
+
+# Helper: Print the third line
+0 44 108 108 97 102 32 121 108 108 97 116 110 101 100 105 99 99 97 32 100 108 117 111 104 115 32 101 108 116 116 111 98 32 110 101 101 114 103 32 101 110 111 32 102 105 32 100 110 65 30 42 27 42
+
+# Helper: Print the beginning of the fourth line
+0 32 101 98 32 108 108 39 101 114 101 104 84  30 42
+
+# Helper: Print the end of the fourth line
+0 46 108 108 97 119 32 101 104 116 32 110 111 32 103 110 105 103 110 97 104 32 115 101 108 116 116 111 98 32 110 101 101 114 103 32 30 42 27 42
+
+# Helper: Print the fourth line
+49 42  9 42 1 1 42 37 42  52 42
+
+# The inside of the loop
+43 42 43 42 46 42 55 42 27 42
+
+# The loop
+58 42 1 1 42 11 42
