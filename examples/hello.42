@@ -1,0 +1,33 @@
+        Hello Susana!
+        Example program in forthytwo.
+
+        Run this as:
+        forthytwo hello.42
+
+        Look down! The actual program starts at line 21.
+
+
+
+
+
+
+
+
+
+
+
+
+
+24 42  28 42  33 42  0 16 42
+
+# The next line prints "Hello " letter by letter
+72  14 42  101  14 42  108  9 42  14 42 14 42  111  14 42  32 14 42
+
+
+# Let's print "Susana" in a loop from the stack
+97 110 97 115 117 83 6 30 42
+# The next line is the print loop
+8 42 14 42 1 1 42 11 42
+
+# Print the new line
+33 14 42 13 14 42 10 14 42
