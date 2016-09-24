@@ -53,7 +53,7 @@ done
 
 # Setup variables
 BUILD_DIR="${SANDBOX}/build/${BUILD_TYPE}"
-INSTALL_DIR="${SANDBOX}/install/${BUILD_TYPE}"
+INSTALL_DIR="${SANDBOX}/install"
 CPUS=$(cat /proc/cpuinfo | grep '^processor' | wc -l)
 JOBS=${JOBS:-${CPUS}}
 
