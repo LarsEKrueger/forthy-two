@@ -1,6 +1,7 @@
 #include <cstring>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include "parser.hpp"
 
 #define CHARS_IN_ERROR 10
@@ -32,6 +33,15 @@ namespace forth
     const std::string &a_line,
     Runtime &a_runtime)
   {
+    std::string::size_type firstNonSpace = a_line.find_first_not_of( " \t");
+    if (firstNonSpace == std::string::npos)
+      return;
+
+    if (a_line.size() > 0)
+    {
+      if (a_line[0] == '#')
+        return;
+    }
     std::istringstream line( a_line);
 
     while ( !line.eof())

@@ -485,6 +485,71 @@ BOOST_AUTO_TEST_CASE(ParseOk)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }
 
+BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
+{
+  std::stringstream file;
+
+  // Add the header
+  for (unsigned i = 1; i < TestRuntime::kOpCodeFirstUser; ++i)
+    file << std::endl;
+
+  // Add the program
+  // 21: 5 dup 2 mod 23 if dup 2 mod 23 26 ifElse
+  file << "5  9 42  2  4 42  23  12 42  9 42  2  4 42  23  26  13 42" <<
+    std::endl;
+  // 22:
+  file << "   \t  " << std::endl;
+  // 23: 1 +
+  file << "1 0 42" << std::endl;
+  // 24:
+  file << std::endl;
+  // 25: # Comment
+  file << "# Comment" << std::endl;
+  // 26: 2 +
+  file << "2 0 42" << std::endl;
+
+  TestRuntime forth;
+  TestParser::TestParseFromStream( "file", file, forth);
+
+  const std::vector< std::vector< TestRuntime::Cell > > &prg =
+    forth.TestGetProgram();
+
+  BOOST_REQUIRE_EQUAL( prg.size(), TestRuntime::kOpCodeFirstUser + 6);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 18);
+
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][0], 5);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][1], 9);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][17], 42);
+
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 2].size(), 3);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 5].size(), 3);
+
+  forth.ResetIp();
+
+  // After 9 steps, we should be in line 23
+  for (unsigned i = 0; i < 9; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser + 2);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
+
+  // 13 steps later, we should be in line 26
+  for (unsigned i = 0; i < 13; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser + 5);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
+
+  // Four more steps and we are at the end.
+  for (unsigned i = 0; i < 4; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 18);
+
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
+}
+
 BOOST_AUTO_TEST_CASE(ParseFail)
 {
   std::stringstream file;
