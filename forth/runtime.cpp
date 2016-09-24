@@ -116,7 +116,7 @@ namespace forth
   void
   Runtime::Compile(
     size_t a_row,
-    Cell   a_number)
+    Cell a_number)
   {
     if ( a_row >= kOpCodeFirstUser && a_row != kOpCodeCall)
     {
@@ -143,6 +143,13 @@ namespace forth
         m_ipCol = 0;
       }
     }
+  }
+
+  void
+  Runtime::ResetIp()
+  {
+    m_ipLine = kOpCodeFirstUser;
+    m_ipCol = 0;
   }
 
   void
@@ -332,6 +339,7 @@ namespace forth
     Runtime &a_forth)
   {
     char c;
+
     std::cin >> c;
 
     // We can't use PushData here or every * will trigger something

@@ -62,7 +62,9 @@ namespace forth
 
       void Compile(
         size_t a_row,
-        Cell   a_number);
+        Cell a_number);
+
+      void ResetIp();
 
       void ComputeStep();
 
