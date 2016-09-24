@@ -87,7 +87,11 @@ namespace forth
   Runtime::PopData()
   {
     if ( m_dataStack.empty())
-      throw StackUnderflow( "PopData");
+    {
+      std::ostringstream str;
+      str << m_filename << "(" << m_ipLine << "): data stack underflow";
+      throw StackUnderflow( str.str().c_str());
+    }
 
     Cell res = m_dataStack.back();
 
@@ -190,7 +194,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.PushData( a + b);
+    a_forth.m_dataStack.push_back( a + b);
   }
 
   void
@@ -200,7 +204,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.PushData( b - a);
+    a_forth.m_dataStack.push_back( b - a);
   }
 
   void
@@ -210,7 +214,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.PushData( a * b);
+    a_forth.m_dataStack.push_back( a * b);
   }
 
   void
@@ -220,7 +224,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.PushData( b / a);
+    a_forth.m_dataStack.push_back( b / a);
   }
 
   void
@@ -230,7 +234,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.PushData( b % a);
+    a_forth.m_dataStack.push_back( b % a);
   }
 
   void
@@ -240,7 +244,7 @@ namespace forth
     bool a = a_forth.PopData() != 0;
     bool b = a_forth.PopData() != 0;
 
-    a_forth.PushData( (a && b) ? 1 : 0);
+    a_forth.m_dataStack.push_back( (a && b) ? 1 : 0);
   }
 
   void
@@ -250,7 +254,7 @@ namespace forth
     bool a = a_forth.PopData() != 0;
     bool b = a_forth.PopData() != 0;
 
-    a_forth.PushData( (a || b) ? 1 : 0);
+    a_forth.m_dataStack.push_back( (a || b) ? 1 : 0);
   }
 
   void
@@ -259,7 +263,7 @@ namespace forth
   {
     bool a = a_forth.PopData() != 0;
 
-    a_forth.PushData( (!a) ? 1 : 0);
+    a_forth.m_dataStack.push_back( (!a) ? 1 : 0);
   }
 
   void
@@ -279,7 +283,7 @@ namespace forth
     if ( a_forth.m_dataStack.size() == 0)
       throw StackUnderflow( "Dup");
     size_t tos = a_forth.m_dataStack.size() - 1;
-    a_forth.PushData( a_forth.m_dataStack[tos]);
+    a_forth.m_dataStack.push_back( a_forth.m_dataStack[tos]);
   }
 
   void
