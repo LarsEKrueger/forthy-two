@@ -67,6 +67,9 @@ namespace forth
   Runtime::Cell
   Runtime::PopData()
   {
+    if( m_dataStack.empty())
+      throw StackUnderflow( "PopData");
+
     Cell res = m_dataStack.back();
 
     m_dataStack.pop_back();
@@ -80,6 +83,31 @@ namespace forth
     m_returnStack.push_back( a_data);
   }
 
+  Runtime::Cell
+  Runtime::PopReturn()
+  {
+    if( m_returnStack.empty())
+      throw StackUnderflow( "PopReturn");
+
+    Cell res = m_returnStack.back();
+
+    m_returnStack.pop_back();
+    return res;
+  }
+
+  void
+  Runtime::Compile(
+    size_t a_row,
+    Cell   a_number)
+  {
+    if ( a_row >= kOpCodeFirstUser && a_row != kOpCodeCall)
+    {
+      if ( m_program.size() <= a_row)
+        m_program.resize( a_row + 1);
+      m_program[a_row].push_back( a_number);
+    }
+  }
+
   void
   Runtime::DoOpcode()
   {
@@ -87,6 +115,40 @@ namespace forth
 
     if (opCode < kOpCodeFirstUser)
       kIntrinsics[ opCode]( *this);
+    else
+    {
+      PushReturn( m_ipLine);
+      PushReturn( m_ipCol);
+
+      m_ipLine = opCode;
+      m_ipCol = 0;
+    }
+  }
+
+  void
+  Runtime::ComputeStep()
+  {
+    if (m_ipLine < m_program.size())
+    {
+      if (m_ipCol < m_program[m_ipLine].size())
+      {
+        Cell v = m_program[m_ipLine][m_ipCol];
+        m_ipCol++;
+        PushData( v);
+      }
+      else
+      {
+        // Pop the return stack
+        m_ipCol = PopReturn();
+        m_ipLine = PopReturn();
+      }
+    }
+    else
+    {
+      // Go to start
+      m_ipLine = kOpCodeFirstUser;
+      m_ipCol = 0;
+    }
   }
 
   void

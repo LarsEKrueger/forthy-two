@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdint.h>
 #include <cstdlib>
+#include <stdexcept>
 
 namespace forth
 {
@@ -30,6 +31,16 @@ namespace forth
 
       static const Cell kOpCodeCall;
 
+      class StackUnderflow : public std::runtime_error
+      {
+        public:
+          StackUnderflow(
+            const char * a_what)
+            : std::runtime_error( a_what)
+          {
+          }
+      };
+
       Runtime();
 
       ~Runtime();
@@ -40,11 +51,20 @@ namespace forth
       void PushReturn(
         Cell a_data);
 
+      void Compile(
+        size_t a_row,
+        Cell   a_number);
+
+      void ComputeStep();
+
     protected:
       std::vector<Cell> m_returnStack;
       std::vector<Cell> m_dataStack;
 
+      std::vector< std::vector< Cell> > m_program;
+
       Cell PopData();
+      Cell PopReturn();
 
       void DoOpcode();
 
@@ -80,8 +100,8 @@ namespace forth
       static void IntrExit(
         Runtime &a_forth);
 
-      Cell m_ipLine;
-      Cell m_ipCol;
+      size_t m_ipLine;
+      size_t m_ipCol;
   };
 
 }
