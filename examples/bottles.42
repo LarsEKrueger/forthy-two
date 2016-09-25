@@ -21,10 +21,10 @@
 99 61 42               27 42  0 16 42
 
 # Helper: Print a non-zero character
-9 42   14 12 42
+9 42  7 42  7 42   2 2 42   10 0 42  42
 
 # Helper: Print a line break
-13 14 42 10 14 42
+13 12 42 10 12 42
 
 # Helper: Print a zero-terminated string
 24 42 11 42

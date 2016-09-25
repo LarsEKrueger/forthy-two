@@ -54,26 +54,24 @@ class TestRuntime : public forth::Runtime
     }
 
     static void
-      CheckIndices()
-      {
-        BOOST_CHECK( kIntrinsics[kOpCodePlus] == &IntrPlus);
-        BOOST_CHECK( kIntrinsics[kOpCodeMinus] == &IntrMinus);
-        BOOST_CHECK( kIntrinsics[kOpCodeMult] == &IntrMult);
-        BOOST_CHECK( kIntrinsics[kOpCodeDiv] == &IntrDiv);
-        BOOST_CHECK( kIntrinsics[kOpCodeMod] == &IntrMod);
-        BOOST_CHECK( kIntrinsics[kOpCodeAnd] == &IntrAnd);
-        BOOST_CHECK( kIntrinsics[kOpCodeOr] == &IntrOr);
-        BOOST_CHECK( kIntrinsics[kOpCodeNot] == &IntrNot);
-        BOOST_CHECK( kIntrinsics[kOpCodeSwap] == &IntrSwap);
-        BOOST_CHECK( kIntrinsics[kOpCodeDup] == &IntrDup);
-        BOOST_CHECK( kIntrinsics[kOpCodeDrop] == &IntrDrop);
-        BOOST_CHECK( kIntrinsics[kOpCodeLoop] == &IntrLoop);
-        BOOST_CHECK( kIntrinsics[kOpCodeIf] == &IntrIf);
-        BOOST_CHECK( kIntrinsics[kOpCodeIfElse] == &IntrIfElse);
-        BOOST_CHECK( kIntrinsics[kOpCodeEmit] == &IntrEmit);
-        BOOST_CHECK( kIntrinsics[kOpCodeRead] == &IntrRead);
-        BOOST_CHECK( kIntrinsics[kOpCodeExit] == &IntrExit);
-      }
+    CheckIndices()
+    {
+      BOOST_CHECK( kIntrinsics[kOpCodePlus] == &IntrPlus);
+      BOOST_CHECK( kIntrinsics[kOpCodeMinus] == &IntrMinus);
+      BOOST_CHECK( kIntrinsics[kOpCodeMult] == &IntrMult);
+      BOOST_CHECK( kIntrinsics[kOpCodeDiv] == &IntrDiv);
+      BOOST_CHECK( kIntrinsics[kOpCodeMod] == &IntrMod);
+      BOOST_CHECK( kIntrinsics[kOpCodeAnd] == &IntrAnd);
+      BOOST_CHECK( kIntrinsics[kOpCodeOr] == &IntrOr);
+      BOOST_CHECK( kIntrinsics[kOpCodeNot] == &IntrNot);
+      BOOST_CHECK( kIntrinsics[kOpCodeSwap] == &IntrSwap);
+      BOOST_CHECK( kIntrinsics[kOpCodeDup] == &IntrDup);
+      BOOST_CHECK( kIntrinsics[kOpCodeDrop] == &IntrDrop);
+      BOOST_CHECK( kIntrinsics[kOpCodeLoop] == &IntrLoop);
+      BOOST_CHECK( kIntrinsics[kOpCodeEmit] == &IntrEmit);
+      BOOST_CHECK( kIntrinsics[kOpCodeRead] == &IntrRead);
+      BOOST_CHECK( kIntrinsics[kOpCodeExit] == &IntrExit);
+    }
 };
 
 BOOST_AUTO_TEST_CASE(OpCodeIndices)
@@ -270,7 +268,7 @@ BOOST_AUTO_TEST_CASE(Dup)
   BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 2);
 }
 
-BOOST_AUTO_TEST_CASE(Dropt)
+BOOST_AUTO_TEST_CASE(Drop)
 {
   TestRuntime forth;
 
@@ -325,89 +323,6 @@ BOOST_AUTO_TEST_CASE(Looping)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 5 + 7 * 4);
 }
 
-BOOST_AUTO_TEST_CASE(If)
-{
-  TestRuntime forth;
-
-  // We run the following program
-  // 21: 5 dup 2 mod 22 if dup 2 mod 22 23 ifElse
-  // 22: 1 +
-  // 23: 2 +
-
-  // The if will enter line 22 because 5 % 2 = 1 -> true
-  // Line 22 will increment TOS to 6
-  // The ifElse will enter line 23 because 6 % 2 = -> false
-  // Line 23 will increment TOS to 8
-
-  // 21
-  forth.Compile( TestRuntime::kOpCodeFirstUser, 5);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeDup);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeMod);
-  forth.Compile( TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeFirstUser + 1);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeIf);
-
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeDup);
-  forth.Compile( TestRuntime::kOpCodeFirstUser, 2);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeMod);
-
-  forth.Compile( TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeFirstUser + 1);
-  forth.Compile( TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeFirstUser + 2);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser,
-    TestRuntime::kOpCodeIfElse);
-
-  // 22
-  forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 1);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser + 1,
-    TestRuntime::kOpCodePlus);
-
-  // 23
-  forth.Compile( TestRuntime::kOpCodeFirstUser + 2, 2);
-  TestCompileCall( forth,
-    TestRuntime::kOpCodeFirstUser + 2,
-    TestRuntime::kOpCodePlus);
-
-  forth.ResetIp();
-
-  // After 9 steps, we should be in line 22
-  for (unsigned i = 0; i < 9; ++i)
-    forth.ComputeStep();
-  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser + 1);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
-
-  // 13 steps later, we should be in line 23
-  for (unsigned i = 0; i < 13; ++i)
-    forth.ComputeStep();
-  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser + 2);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
-
-  // Four more steps and we are at the end.
-  for (unsigned i = 0; i < 4; ++i)
-    forth.ComputeStep();
-  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 18);
-
-  BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
-}
-
 class TestParser : public forth::Parser
 {
   public:
@@ -435,13 +350,13 @@ BOOST_AUTO_TEST_CASE(ParseOk)
     file << std::endl;
 
   // Add the program
-  // 21: 5 dup 2 mod 22 if dup 2 mod 22 23 ifElse
-  file << "5  9 42  2  4 42  22  12 42  9 42  2  4 42  22  23  13 42" <<
+  // 21:   5  dup   2  mod   22  plus  call dup   2  mod   22 plus call
+  file << "5  9 42  2  4 42  22  0 42  42   9 42  2  4 42  22 0 42 42" <<
     std::endl;
-  // 22: 1 +
-  file << "1 0 42" << std::endl;
-  // 23: 2 +
+  // 22: 2 +
   file << "2 0 42" << std::endl;
+  // 23: 1 +
+  file << "1 0 42" << std::endl;
 
   TestRuntime forth;
   TestParser::TestParseFromStream( "file", file, forth);
@@ -450,29 +365,29 @@ BOOST_AUTO_TEST_CASE(ParseOk)
     forth.TestGetProgram();
 
   BOOST_REQUIRE_EQUAL( prg.size(), TestRuntime::kOpCodeFirstUser + 3);
-  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 18);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 19);
 
   BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][0], 5);
   BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][1], 9);
-  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][17], 42);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][18], 42);
 
   BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 1].size(), 3);
   BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 2].size(), 3);
 
   forth.ResetIp();
 
-  // After 9 steps, we should be in line 22
-  for (unsigned i = 0; i < 9; ++i)
-    forth.ComputeStep();
-  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser + 1);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
-
-  // 13 steps later, we should be in line 23
-  for (unsigned i = 0; i < 13; ++i)
+  // We should be in line 23
+  for (unsigned i = 0; i < 10; ++i)
     forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
     TestRuntime::kOpCodeFirstUser + 2);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
+
+  // We should be in line 22
+  for (unsigned i = 0; i < 13; ++i)
+    forth.ComputeStep();
+  BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
+    TestRuntime::kOpCodeFirstUser + 1);
   BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
 
   // Four more steps and we are at the end.
@@ -480,7 +395,7 @@ BOOST_AUTO_TEST_CASE(ParseOk)
     forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
     TestRuntime::kOpCodeFirstUser);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 18);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 19);
 
   BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }
@@ -494,19 +409,17 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
     file << std::endl;
 
   // Add the program
-  // 21: 5 dup 2 mod 23 if dup 2 mod 23 26 ifElse
-  file << "5  9 42  2  4 42  23  12 42  9 42  2  4 42  23  26  13 42" <<
+  // 21:   5  dup   2  mod   23  plus  call dup   2  mod   23 plus call
+  file << "5  9 42  2  4 42  24  0 42  42   9 42  2  4 42  24 0 42 42" <<
     std::endl;
   // 22:
   file << "   \t  " << std::endl;
-  // 23: 1 +
-  file << "1 0 42" << std::endl;
-  // 24:
-  file << std::endl;
-  // 25: # Comment
+  // 23: # Comment
   file << "# Comment" << std::endl;
-  // 26: 2 +
+  // 24: 2 +
   file << "2 0 42" << std::endl;
+  // 25: 1 +
+  file << "1 0 42" << std::endl;
 
   TestRuntime forth;
   TestParser::TestParseFromStream( "file", file, forth);
@@ -514,30 +427,30 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
   const std::vector< std::vector< TestRuntime::Cell > > &prg =
     forth.TestGetProgram();
 
-  BOOST_REQUIRE_EQUAL( prg.size(), TestRuntime::kOpCodeFirstUser + 6);
-  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 18);
+  BOOST_REQUIRE_EQUAL( prg.size(), TestRuntime::kOpCodeFirstUser + 5);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 19);
 
   BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][0], 5);
   BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][1], 9);
-  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][17], 42);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][18], 42);
 
-  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 2].size(), 3);
-  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 5].size(), 3);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 3].size(), 3);
+  BOOST_REQUIRE_EQUAL( prg[TestRuntime::kOpCodeFirstUser + 4].size(), 3);
 
   forth.ResetIp();
 
-  // After 9 steps, we should be in line 23
-  for (unsigned i = 0; i < 9; ++i)
+  // We should be in line 25
+  for (unsigned i = 0; i < 10; ++i)
     forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser + 2);
+    TestRuntime::kOpCodeFirstUser + 4);
   BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
 
-  // 13 steps later, we should be in line 26
+  // We should be in line 24
   for (unsigned i = 0; i < 13; ++i)
     forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
-    TestRuntime::kOpCodeFirstUser + 5);
+    TestRuntime::kOpCodeFirstUser + 3);
   BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 0);
 
   // Four more steps and we are at the end.
@@ -545,7 +458,7 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
     forth.ComputeStep();
   BOOST_CHECK_EQUAL( forth.TestGetIpLine(),
     TestRuntime::kOpCodeFirstUser);
-  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 18);
+  BOOST_CHECK_EQUAL( forth.TestGetIpCol(), 19);
 
   BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }

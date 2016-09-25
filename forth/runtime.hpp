@@ -28,8 +28,6 @@ namespace forth
       static const Cell kOpCodeDrop;
 
       static const Cell kOpCodeLoop;
-      static const Cell kOpCodeIf;
-      static const Cell kOpCodeIfElse;
 
       static const Cell kOpCodeEmit;
       static const Cell kOpCodeRead;
@@ -119,10 +117,6 @@ namespace forth
         Runtime &a_forth);
 
       static void IntrLoop(
-        Runtime &a_forth);
-      static void IntrIf(
-        Runtime &a_forth);
-      static void IntrIfElse(
         Runtime &a_forth);
 
       static void IntrEmit(

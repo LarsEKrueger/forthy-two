@@ -19,13 +19,11 @@ namespace forth
   const Runtime::Cell Runtime::kOpCodeDrop = 10;
 
   const Runtime::Cell Runtime::kOpCodeLoop = 11;
-  const Runtime::Cell Runtime::kOpCodeIf = 12;
-  const Runtime::Cell Runtime::kOpCodeIfElse = 13;
 
-  const Runtime::Cell Runtime::kOpCodeEmit = 14;
-  const Runtime::Cell Runtime::kOpCodeRead = 15;
+  const Runtime::Cell Runtime::kOpCodeEmit = 12;
+  const Runtime::Cell Runtime::kOpCodeRead = 13;
 
-  const Runtime::Cell Runtime::kOpCodeExit = 16;
+  const Runtime::Cell Runtime::kOpCodeExit = 14;
 
   const Runtime::Cell Runtime::kOpCodeFirstUser = 21;
 
@@ -47,12 +45,12 @@ namespace forth
     IntrDrop,
 
     IntrLoop,
-    IntrIf,
-    IntrIfElse,
 
     IntrEmit,
     IntrRead,
 
+    IntrExit,
+    IntrExit,
     IntrExit,
     IntrExit,
     IntrExit,
@@ -317,28 +315,6 @@ namespace forth
     {
       a_forth.m_ipCol = 0;
     }
-  }
-
-  void
-  Runtime::IntrIf(
-    Runtime &a_forth)
-  {
-    Cell opCode = a_forth.PopData();
-    Cell cond = a_forth.PopData();
-
-    if (cond != 0)
-      a_forth.DoOpcode( opCode);
-  }
-
-  void
-  Runtime::IntrIfElse(
-    Runtime &a_forth)
-  {
-    Cell opCodeNo = a_forth.PopData();
-    Cell opCodeYes = a_forth.PopData();
-    Cell cond = a_forth.PopData();
-
-    a_forth.DoOpcode( (cond != 0) ? opCodeYes : opCodeNo);
   }
 
   void
