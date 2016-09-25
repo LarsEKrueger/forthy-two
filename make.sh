@@ -60,7 +60,7 @@ JOBS=${JOBS:-${CPUS}}
 # format the source
 if test "${FORMATSOURCE}" == true; then
   cd ${SANDBOX}
-  uncrustify -c uncrustify.cfg --replace $(find forth test -name '*.cpp' -o -name '*.hpp')
+  uncrustify -c uncrustify.cfg --replace $(find forth test apps -name '*.cpp' -o -name '*.hpp')
   exit 0
 fi
 
