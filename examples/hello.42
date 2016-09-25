@@ -18,10 +18,10 @@
 
 
 
-24 42  28 42  33 42  0 16 42
+24 42 28 42 33 42 0 16 42
 
 # The next line prints "Hello " letter by letter
-72  12 42  101  12 42  108  9 42  12 42 12 42  111  12 42  32 12 42
+72 12 42 101 12 42 108 9 42 12 42 12 42 111 12 42 32 12 42
 
 
 # Let's print "Susana" in a loop from the stack
