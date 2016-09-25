@@ -57,6 +57,9 @@ namespace forth
       void PushData(
         Cell a_data);
 
+      void PushDataNoExec(
+        Cell a_data);
+
       void PushReturn(
         Cell a_data);
 
@@ -64,7 +67,8 @@ namespace forth
         size_t a_row,
         Cell a_number);
 
-      void ResetIp();
+      void ResetIp(
+        size_t a_line = kOpCodeFirstUser);
 
       void ComputeStep();
 

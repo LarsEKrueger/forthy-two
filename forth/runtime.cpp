@@ -80,7 +80,14 @@ namespace forth
       DoOpcode( opCode);
     }
     else
-      m_dataStack.push_back( a_data);
+      PushDataNoExec( a_data);
+  }
+
+  void
+  Runtime::PushDataNoExec(
+    Cell a_data)
+  {
+    m_dataStack.push_back( a_data);
   }
 
   Runtime::Cell
@@ -155,9 +162,10 @@ namespace forth
   }
 
   void
-  Runtime::ResetIp()
+  Runtime::ResetIp(
+    size_t a_line)
   {
-    m_ipLine = kOpCodeFirstUser;
+    m_ipLine = a_line;
     m_ipCol = 0;
   }
 
@@ -194,7 +202,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.m_dataStack.push_back( a + b);
+    a_forth.PushDataNoExec( a + b);
   }
 
   void
@@ -204,7 +212,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.m_dataStack.push_back( b - a);
+    a_forth.PushDataNoExec( b - a);
   }
 
   void
@@ -214,7 +222,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.m_dataStack.push_back( a * b);
+    a_forth.PushDataNoExec( a * b);
   }
 
   void
@@ -224,7 +232,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.m_dataStack.push_back( b / a);
+    a_forth.PushDataNoExec( b / a);
   }
 
   void
@@ -234,7 +242,7 @@ namespace forth
     Cell a = a_forth.PopData();
     Cell b = a_forth.PopData();
 
-    a_forth.m_dataStack.push_back( b % a);
+    a_forth.PushDataNoExec( b % a);
   }
 
   void
@@ -244,7 +252,7 @@ namespace forth
     bool a = a_forth.PopData() != 0;
     bool b = a_forth.PopData() != 0;
 
-    a_forth.m_dataStack.push_back( (a && b) ? 1 : 0);
+    a_forth.PushDataNoExec( (a && b) ? 1 : 0);
   }
 
   void
@@ -254,7 +262,7 @@ namespace forth
     bool a = a_forth.PopData() != 0;
     bool b = a_forth.PopData() != 0;
 
-    a_forth.m_dataStack.push_back( (a || b) ? 1 : 0);
+    a_forth.PushDataNoExec( (a || b) ? 1 : 0);
   }
 
   void
@@ -263,7 +271,7 @@ namespace forth
   {
     bool a = a_forth.PopData() != 0;
 
-    a_forth.m_dataStack.push_back( (!a) ? 1 : 0);
+    a_forth.PushDataNoExec( (!a) ? 1 : 0);
   }
 
   void
@@ -283,7 +291,7 @@ namespace forth
     if ( a_forth.m_dataStack.size() == 0)
       throw StackUnderflow( "Dup");
     size_t tos = a_forth.m_dataStack.size() - 1;
-    a_forth.m_dataStack.push_back( a_forth.m_dataStack[tos]);
+    a_forth.PushDataNoExec( a_forth.m_dataStack[tos]);
   }
 
   void
@@ -352,7 +360,7 @@ namespace forth
     std::cin >> c;
 
     // We can't use PushData here or every * will trigger something
-    a_forth.m_dataStack.push_back( c);
+    a_forth.PushDataNoExec( c);
   }
 
   void
