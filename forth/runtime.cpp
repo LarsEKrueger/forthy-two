@@ -29,6 +29,7 @@ namespace forth
 
   const Runtime::Cell Runtime::kOpCodeCall = 42;
 
+  /// Lookup table of the intrinsics. Keep in sync with the opcodes above.
   const Runtime::Intrinsic Runtime::kIntrinsics[ Runtime::kOpCodeFirstUser] =
   {
     IntrPlus,
@@ -72,6 +73,8 @@ namespace forth
   Runtime::PushData(
     Cell a_data)
   {
+    // If the number to push is magic, take the top of the stack and call the
+    // line
     if ( a_data == kOpCodeCall)
     {
       Cell opCode = PopData();
@@ -91,6 +94,7 @@ namespace forth
   Runtime::Cell
   Runtime::PopData()
   {
+    // Handle an empty stack
     if ( m_dataStack.empty())
     {
       std::ostringstream str;
@@ -99,7 +103,6 @@ namespace forth
     }
 
     Cell res = m_dataStack.back();
-
     m_dataStack.pop_back();
     return res;
   }
@@ -111,9 +114,10 @@ namespace forth
     m_returnStack.push_back( a_data);
   }
 
-  Runtime::Cell
+  size_t
   Runtime::PopReturn()
   {
+    // Handle an empty stack
     if ( m_returnStack.empty())
     {
       std::ostringstream str;
@@ -122,7 +126,6 @@ namespace forth
     }
 
     Cell res = m_returnStack.back();
-
     m_returnStack.pop_back();
     return res;
   }
@@ -132,10 +135,13 @@ namespace forth
     size_t a_row,
     Cell a_number)
   {
+    // If it's a valid line
     if ( a_row >= kOpCodeFirstUser && a_row != kOpCodeCall)
     {
+      // Resize the program memory if required
       if ( m_program.size() <= a_row)
         m_program.resize( a_row + 1);
+      // Append the number to the line
       m_program[a_row].push_back( a_number);
     }
   }
@@ -144,15 +150,19 @@ namespace forth
   Runtime::DoOpcode(
     Cell a_opCode)
   {
+    // Only handle legal, i.e. non-negative opcodes
     if (a_opCode >= 0)
     {
+      // If it is an intrinsic, run it
       if (a_opCode < kOpCodeFirstUser)
         kIntrinsics[ a_opCode]( *this);
       else
       {
+        // Otherwise, we remember where we are
         PushReturn( m_ipLine);
         PushReturn( m_ipCol);
 
+        // And set the IP to the new position
         m_ipLine = a_opCode;
         m_ipCol = 0;
       }
@@ -170,17 +180,23 @@ namespace forth
   void
   Runtime::ComputeStep()
   {
+    // If the IP is outside the program, we jump back to the beginning.
     if (m_ipLine < m_program.size())
     {
+      // If we still have things to do on this line
       if (m_ipCol < m_program[m_ipLine].size())
       {
+        // Read the value
         Cell v = m_program[m_ipLine][m_ipCol];
+        // Advance the IP
         m_ipCol++;
+        // Push the data or execute the code
         PushData( v);
       }
       else
       {
-        // Pop the return stack
+        // We are at the end of the line, pop the return stack and continue
+        // where we left off
         m_ipCol = PopReturn();
         m_ipLine = PopReturn();
       }
@@ -247,9 +263,11 @@ namespace forth
   Runtime::IntrAnd(
     Runtime &a_forth)
   {
+    // Get the two values and convert them to bools
     bool a = a_forth.PopData() != 0;
     bool b = a_forth.PopData() != 0;
 
+    // Push the result back
     a_forth.PushDataNoExec( (a && b) ? 1 : 0);
   }
 
@@ -278,6 +296,7 @@ namespace forth
   {
     if ( a_forth.m_dataStack.size() < 2)
       throw StackUnderflow( "Swap");
+    // Get the index of the value below the top of the stack
     size_t tos1 = a_forth.m_dataStack.size() - 2;
     std::swap( a_forth.m_dataStack[tos1], a_forth.m_dataStack[tos1 + 1]);
   }
@@ -306,13 +325,17 @@ namespace forth
     if ( a_forth.m_dataStack.size() == 0)
       throw StackUnderflow( "Dup");
     size_t tos = a_forth.m_dataStack.size() - 1;
+
+    // We check the value for being non-zero
     Cell v = a_forth.m_dataStack[tos];
     if (v == 0)
     {
+      // If it is zero, drop it and continue with the next instruction
       a_forth.PopData();
     }
     else
     {
+      // Start at the beginning of the line
       a_forth.m_ipCol = 0;
     }
   }

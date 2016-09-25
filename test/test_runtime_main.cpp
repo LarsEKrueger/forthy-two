@@ -3,6 +3,8 @@
 #include <forth/runtime.hpp>
 #include <forth/parser.hpp>
 
+/** Interface to expose protected attributes and methods.
+ */
 class TestRuntime : public forth::Runtime
 {
   public:
@@ -53,6 +55,10 @@ class TestRuntime : public forth::Runtime
       return m_ipCol;
     }
 
+    /** Test function to check if the opcodes and the intrinsics match. This
+     * is easier done here than exporting all the symbols and checking
+     * outside.
+     */
     static void
     CheckIndices()
     {
@@ -74,11 +80,13 @@ class TestRuntime : public forth::Runtime
     }
 };
 
+/// Tie the actual test into the framework
 BOOST_AUTO_TEST_CASE(OpCodeIndices)
 {
   TestRuntime::CheckIndices();
 }
 
+/// Check if the stacks work
 BOOST_AUTO_TEST_CASE(Basics)
 {
   TestRuntime forth;
@@ -91,6 +99,7 @@ BOOST_AUTO_TEST_CASE(Basics)
   BOOST_CHECK_EQUAL( forth.TestReturnStackSize(), 2);
 }
 
+/// Test function for intrinsics with two operands
 static void
 TestIntrinsic2(
   forth::Runtime::Cell a_operand1,
@@ -111,6 +120,7 @@ TestIntrinsic2(
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 0);
 }
 
+/// Test function for intrinsics with one operand
 static void
 TestIntrinsic1(
   forth::Runtime::Cell a_operand,
@@ -129,6 +139,7 @@ TestIntrinsic1(
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 0);
 }
 
+/// Compile a call to an intrinsic
 static void
 TestCompileCall(
   TestRuntime &a_forth,
@@ -139,6 +150,7 @@ TestCompileCall(
   a_forth.Compile( a_line, TestRuntime::kOpCodeCall);
 }
 
+/// Test the individual intrinsics
 BOOST_AUTO_TEST_CASE(Intrinsics)
 {
   TestIntrinsic2( 2, 3, TestRuntime::kOpCodePlus, 5);
@@ -165,6 +177,7 @@ BOOST_AUTO_TEST_CASE(Intrinsics)
   TestIntrinsic1( 0, TestRuntime::kOpCodeNot, 1);
 }
 
+/// Test the compiler
 BOOST_AUTO_TEST_CASE(Compiler)
 {
   TestRuntime forth;
@@ -188,6 +201,7 @@ BOOST_AUTO_TEST_CASE(Compiler)
     TestRuntime::kOpCodeCall);
 }
 
+/// Compile a simple sequence and run it step by step.
 BOOST_AUTO_TEST_CASE(Running)
 {
   TestRuntime forth;
@@ -210,14 +224,17 @@ BOOST_AUTO_TEST_CASE(Running)
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
 }
 
+/// Compile a simple program where one line calls the other, and then run it.
 BOOST_AUTO_TEST_CASE(Calling)
 {
   TestRuntime forth;
 
+  // Compile to call the second line
   TestCompileCall( forth,
     TestRuntime::kOpCodeFirstUser,
     TestRuntime::kOpCodeFirstUser + 1);
 
+  // For the second line, compile two numbers and the opcode to add them
   forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 2);
   forth.Compile( TestRuntime::kOpCodeFirstUser + 1, 3);
   TestCompileCall( forth,
@@ -234,6 +251,7 @@ BOOST_AUTO_TEST_CASE(Calling)
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
 }
 
+/// Test the swap intrinsic
 BOOST_AUTO_TEST_CASE(Swap)
 {
   TestRuntime forth;
@@ -252,6 +270,7 @@ BOOST_AUTO_TEST_CASE(Swap)
   BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 2);
 }
 
+/// Test the dup intrinsic
 BOOST_AUTO_TEST_CASE(Dup)
 {
   TestRuntime forth;
@@ -268,6 +287,7 @@ BOOST_AUTO_TEST_CASE(Dup)
   BOOST_CHECK_EQUAL( forth.TestDataStackAt( 1), 2);
 }
 
+/// Test the drop intrinsic
 BOOST_AUTO_TEST_CASE(Drop)
 {
   TestRuntime forth;
@@ -282,10 +302,12 @@ BOOST_AUTO_TEST_CASE(Drop)
   BOOST_REQUIRE_EQUAL( forth.TestDataStackSize(), 0);
 }
 
+/// Test the looping mechanism
 BOOST_AUTO_TEST_CASE(Looping)
 {
   TestRuntime forth;
 
+  // Place 5 and 7 on the stack, then call the second line
   // 21: 5 7 22 call
   forth.Compile( TestRuntime::kOpCodeFirstUser, 5);
   forth.Compile( TestRuntime::kOpCodeFirstUser, 7);
@@ -293,6 +315,9 @@ BOOST_AUTO_TEST_CASE(Looping)
     TestRuntime::kOpCodeFirstUser,
     TestRuntime::kOpCodeFirstUser + 1);
 
+  // Expects an accumulator and an iteration counter.
+  // add 4 to the accumulator, then decrement the counter.
+  // Jump back to the beginning if the counter is non-zero
   // 22: swap 4 + swap 1 - loop
   TestCompileCall( forth,
     TestRuntime::kOpCodeFirstUser + 1,
@@ -323,6 +348,10 @@ BOOST_AUTO_TEST_CASE(Looping)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 5 + 7 * 4);
 }
 
+/** Interface to expose the protected methods in the parser class.
+ * This is not in its own test file because we need access to the private
+ * methods of the runtime.
+ */
 class TestParser : public forth::Parser
 {
   public:
@@ -341,6 +370,7 @@ class TestParser : public forth::Parser
 
 };
 
+/// Parse and run a simple program
 BOOST_AUTO_TEST_CASE(ParseOk)
 {
   std::stringstream file;
@@ -349,7 +379,12 @@ BOOST_AUTO_TEST_CASE(ParseOk)
   for (unsigned i = 1; i < TestRuntime::kOpCodeFirstUser; ++i)
     file << std::endl;
 
-  // Add the program
+  // Add the program. The program is equivalent to:
+  // a = 5
+  // if (a % 2 == 0) a += 2; else a += 1;
+  // if (a % 2 == 0) a += 2; else a += 1;
+  // We do, however, use the result of the modulus operation as an offset to
+  // call line 22 on even, and line 23 on odd values.
   // 21:   5  dup   2  mod   22  plus  call dup   2  mod   22 plus call
   file << "5  9 42  2  4 42  22  0 42  42   9 42  2  4 42  22 0 42 42" <<
     std::endl;
@@ -400,6 +435,9 @@ BOOST_AUTO_TEST_CASE(ParseOk)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }
 
+/** Same program as before, but with a whitespace-only line and a comment line
+ * before the two incrementing lines.
+ */
 BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
 {
   std::stringstream file;
@@ -409,7 +447,7 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
     file << std::endl;
 
   // Add the program
-  // 21:   5  dup   2  mod   23  plus  call dup   2  mod   23 plus call
+  // 21:   5  dup   2  mod   24  plus  call dup   2  mod   24 plus call
   file << "5  9 42  2  4 42  24  0 42  42   9 42  2  4 42  24 0 42 42" <<
     std::endl;
   // 22:
@@ -463,6 +501,7 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 8);
 }
 
+/// Test if a non-number can be detected by the parser.
 BOOST_AUTO_TEST_CASE(ParseFail)
 {
   std::stringstream file;

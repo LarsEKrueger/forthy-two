@@ -6,8 +6,15 @@
 
 namespace forth
 {
+  /** Parser functions to read the source files of forthytwo.
+   *
+   * The functions are implemented as static members of the Parser struct.
+   * This way, we can make the internal functions protected. The testing rig
+   * can then make them accessible again.
+   */
   struct Parser
   {
+    /// Parsing exception
     class ParseError : public std::runtime_error
     {
       public:
@@ -18,6 +25,7 @@ namespace forth
         }
     };
 
+    /// Public interface to parsing function
     static void
     ParseFromFile(
       const char * a_filename,
@@ -25,13 +33,15 @@ namespace forth
 
     protected:
 
+      /// Process a line from the stream
       static void
       CompileLine(
-        const char *       a_filename,
+        const char * a_filename,
         size_t a_lineNo,
         const std::string &a_line,
         Runtime &a_runtime);
 
+      /// Parse the stream
       static void
       ParseFromStream(
         const char *  a_filename,
