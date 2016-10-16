@@ -12,8 +12,7 @@ namespace forth
   Tester::ProcessLine(
     const char * a_filename,
     size_t a_lineNo,
-    const std::string &a_line
-    )
+    const std::string &a_line)
   {
     // If we find a non-space in the line, we have to parse it. If not, we can
     // ignore the line as empty.
@@ -28,36 +27,90 @@ namespace forth
       return;
 
     // Ensure that the second character is a space, then get the parameters
-    if (a_line.size() >= 2)
+    if (a_line.size() < 2)
+      ThrowParseError( a_filename, a_lineNo, "Missing line leader");
+
+    if (a_line[1] != ' ')
+      ThrowParseError( a_filename, a_lineNo, "Missing space in line leader");
+
+    std::string param = a_line.substr( 2);
+    switch (a_line[0])
     {
-      if (a_line[1] == ' ')
-      {
-        std::string param = a_line.substr( 2);
-
-        switch (a_line[0]) {
-          case '=':
-          // Create a new test case with param as the name
-          return;
-          break;
-          case '@':
+      case '=':
+        // Create a new test case with param as the name
+        m_test_case.push_back( TestCase( param));
+        break;
+      case '@':
+        {
           // Set the starting line of this test
-          return;
-          break;
-          case '^':
-          // Set the initial stack contents
-          return;
-          break;
-          case 'v':
-          // Set the final stack contents
-          return;
-          break;
-        }
-      }
-    }
+          if (m_test_case.size() == 0)
+            ThrowParseError( a_filename, a_lineNo, "No test declared");
 
+          TestCase &test_case = m_test_case[m_test_case.size() - 1];
+          std::istringstream nr_parser(param);
+          Runtime::Cell start_line = -1;
+          if ( !(nr_parser >> start_line))
+            ThrowParseError( a_filename, a_lineNo, "Can't parse start line");
+
+          if ( start_line < Runtime::kOpCodeFirstUser)
+            ThrowParseError( a_filename, a_lineNo, "Start line too low");
+          test_case.SetStartLine( start_line);
+        }
+        break;
+      case '^':
+        {
+          // Set the initial stack contents
+          if (m_test_case.size() == 0)
+            ThrowParseError( a_filename, a_lineNo, "No test declared");
+
+          TestCase &test_case = m_test_case[m_test_case.size() - 1];
+          std::istringstream nr_parser(param);
+          while (!nr_parser.eof())
+          {
+            Runtime::Cell nr;
+            if ( !(nr_parser >> nr))
+              ThrowParseError( a_filename, a_lineNo, "Can't parse number");
+
+            test_case.AddInputNumber( nr);
+          }
+        }
+        break;
+      case 'v':
+        {
+          // Set the final stack contents
+          if (m_test_case.size() == 0)
+            ThrowParseError( a_filename, a_lineNo, "No test declared");
+
+          TestCase &test_case = m_test_case[m_test_case.size() - 1];
+          std::istringstream nr_parser(param);
+          while (!nr_parser.eof())
+          {
+            Runtime::Cell nr;
+            if ( !(nr_parser >> nr))
+              ThrowParseError( a_filename, a_lineNo, "Can't parse number");
+
+            test_case.AddOutputNumber( nr);
+          }
+        }
+        break;
+      default:
+        ThrowParseError( a_filename, a_lineNo, "Bad line leader");
+        break;
+    }
+  }
+
+  void
+  Tester::ThrowParseError(
+    const char * a_filename,
+    size_t a_lineNo,
+    const char * a_error_message)
+  {
     std::ostringstream msg;
-    msg << a_filename << ":" << a_lineNo << ": Parse error";
-      throw ParseError( msg.str().c_str());
+    msg << a_filename << ":"
+        << a_lineNo << ": Parse error ("
+        << a_error_message
+        << ")";
+    throw ParseError( msg.str().c_str());
   }
 
   void
@@ -84,4 +137,11 @@ namespace forth
 
     }
   }
+
+  size_t
+  Tester::CountTestCases() const
+  {
+    return m_test_case.size();
+  }
+
 }
