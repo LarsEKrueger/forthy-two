@@ -14,3 +14,4 @@ function(DEFINE_TEST baseName)
 endfunction()
 
 DEFINE_TEST(runtime)
+DEFINE_TEST(tester)
