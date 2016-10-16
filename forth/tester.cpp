@@ -1,5 +1,6 @@
 #include <cassert>
 #include <sstream>
+#include <fstream>
 #include "tester.hpp"
 
 namespace forth
@@ -38,6 +39,7 @@ namespace forth
     switch (a_line[0])
     {
       case '=':
+
         // Create a new test case with param as the name
         m_test_case.push_back( TestCase( param));
         break;
@@ -135,8 +137,23 @@ namespace forth
       ProcessLine( a_filename, lineNo, line);
 
       ++lineNo;
-
     }
+  }
+
+  void
+  Tester::ParseFromFile(
+    const char * a_filename)
+  {
+    std::ifstream f( a_filename, std::ios_base::in);
+
+    if ( !f.is_open())
+    {
+      std::ostringstream str;
+      str << "Cannot open '" << a_filename << "'";
+      throw ParseError( str.str().c_str());
+    }
+
+    ParseFromStream( a_filename, f);
   }
 
   size_t

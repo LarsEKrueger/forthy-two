@@ -86,6 +86,10 @@ namespace forth
 
       Tester();
 
+      void
+      ParseFromFile(
+        const char * a_filename);
+
       size_t
       CountTestCases() const;
 
