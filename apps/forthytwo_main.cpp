@@ -5,6 +5,7 @@
 #include <forth/runtime.hpp>
 #include <forth/parser.hpp>
 
+/// Display help text
 static void
 ErrorHelp(
   const char * msg)

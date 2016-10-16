@@ -145,6 +145,7 @@ namespace forth
         const char * a_filename);
 
     protected:
+
       /// Return stack
       std::vector<size_t> m_returnStack;
 

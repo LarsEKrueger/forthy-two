@@ -52,11 +52,13 @@ namespace forth
     while ( !line.eof())
     {
       Runtime::Cell v;
+
       // If we can parse a number, it's a number
       if ( !(line >> v))
       {
         // Drop the error state to look ahead
         line.clear();
+
         // Clear the buffer
         char nextChars[CHARS_IN_ERROR + 1];
         memset( nextChars, 0, sizeof(nextChars));
@@ -64,6 +66,7 @@ namespace forth
         // Read some characters from the line
         line.read( nextChars, CHARS_IN_ERROR);
         std::ostringstream str;
+
         // Build the error message
         str << a_filename << "(" << a_lineNo << "): not a number at '" <<
           nextChars << "'";

@@ -100,6 +100,7 @@ BOOST_AUTO_TEST_CASE(Basics)
   forth.PushReturn( 1);
   BOOST_CHECK_EQUAL( forth.TestReturnStackSize(), 2);
 }
+
 /// Test function for intrinsics with two operands
 static void
 TestIntrinsic2(
@@ -388,8 +389,10 @@ BOOST_AUTO_TEST_CASE(ParseOk)
   // 21:   5  dup   2  mod   22  plus  call dup   2  mod   22 plus call
   file << "5  9 42  2  4 42  22  0 42  42   9 42  2  4 42  22 0 42 42" <<
     std::endl;
+
   // 22: 2 +
   file << "2 0 42" << std::endl;
+
   // 23: 1 +
   file << "1 0 42" << std::endl;
 
@@ -450,12 +453,16 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
   // 21:   5  dup   2  mod   24  plus  call dup   2  mod   24 plus call
   file << "5  9 42  2  4 42  24  0 42  42   9 42  2  4 42  24 0 42 42" <<
     std::endl;
+
   // 22:
   file << "   \t  " << std::endl;
+
   // 23: # Comment
   file << "# Comment" << std::endl;
+
   // 24: 2 +
   file << "2 0 42" << std::endl;
+
   // 25: 1 +
   file << "1 0 42" << std::endl;
 

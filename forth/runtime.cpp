@@ -135,6 +135,7 @@ namespace forth
       // Resize the program memory if required
       if ( m_program.size() <= a_row)
         m_program.resize( a_row + 1);
+
       // Append the number to the line
       m_program[a_row].push_back( a_number);
     }
@@ -179,8 +180,10 @@ namespace forth
       {
         // Read the value
         Cell v = m_program[m_ipLine][m_ipCol];
+
         // Advance the IP
         m_ipCol++;
+
         // Push the data or execute the code
         PushData( v);
       }
@@ -278,6 +281,7 @@ namespace forth
   {
     if ( a_forth.m_dataStack.size() < 2)
       throw StackUnderflow( "Swap");
+
     // Get the index of the value below the top of the stack
     size_t tos1 = a_forth.m_dataStack.size() - 2;
     std::swap( a_forth.m_dataStack[tos1], a_forth.m_dataStack[tos1 + 1]);

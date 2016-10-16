@@ -12,6 +12,7 @@ namespace forth
   class Tester
   {
     public:
+
       /// Parsing exception
       class ParseError : public std::runtime_error
       {
