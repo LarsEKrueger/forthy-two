@@ -1,0 +1,7 @@
+cmd: ../../make.sh
+cwd: ./build/Release
+sh: true
+errorMatch:
+  - (?<file>[\\/0-9a-zA-Z\._]+):(?<line>\d+):(?<col>\d+):.*\serror:\s(?<message>.+)
+warningMatch:
+  - (?<file>[\\/0-9a-zA-Z\._]+):(?<line>\d+):(?<col>\d+):\swarning:\s(?<message>.+)
