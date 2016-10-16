@@ -4,6 +4,7 @@
 
 #include <forth/runtime.hpp>
 #include <forth/parser.hpp>
+
 static void
 ErrorHelp(
   const char * msg)

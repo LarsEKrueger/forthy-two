@@ -7,6 +7,7 @@
 class TestTester : public forth::Tester
 {
   public:
+
     TestTester() : forth::Tester()
     {
 
@@ -21,6 +22,7 @@ class TestTester : public forth::Tester
     }
 
     const forth::Tester::TestCase &
+
     TestGetCase(
       size_t a_ind) const
     {
@@ -84,6 +86,7 @@ BOOST_AUTO_TEST_CASE(GoodCase)
   BOOST_CHECK_EQUAL( tester.TestGetCase(1).GetOutput()[1], 6);
   BOOST_CHECK_EQUAL( tester.TestGetCase(1).GetOutput()[2], 5);
 }
+
 static void
 TestErrorMessage(
   const char * a_file_content,

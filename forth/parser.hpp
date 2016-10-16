@@ -18,6 +18,7 @@ namespace forth
     class ParseError : public std::runtime_error
     {
       public:
+
         ParseError(
           const char * a_what)
           : std::runtime_error( a_what)
@@ -33,6 +34,7 @@ namespace forth
       Runtime &a_runtime);
 
     protected:
+
       /// Process a line from the stream
       static void
       CompileLine(

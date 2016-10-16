@@ -90,6 +90,7 @@ namespace forth
       class StackUnderflow : public std::runtime_error
       {
         public:
+
           StackUnderflow(
             const char * a_what)
             : std::runtime_error( a_what)
@@ -155,6 +156,7 @@ namespace forth
 
       /// Program memory
       std::vector< std::vector< Cell> > m_program;
+
       /// Take one number from the data stack
       Cell
       PopData();
@@ -174,6 +176,7 @@ namespace forth
 
       /// Table of intrinsic
       static const Intrinsic kIntrinsics[];
+
       /// Intrinsic to add two numbers
       static void
       IntrPlus(

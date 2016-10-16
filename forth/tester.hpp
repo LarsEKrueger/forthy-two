@@ -16,6 +16,7 @@ namespace forth
       class ParseError : public std::runtime_error
       {
         public:
+
           ParseError(
             const char * a_what)
             : std::runtime_error( a_what)
@@ -27,6 +28,7 @@ namespace forth
       class TestCase
       {
         public:
+
           TestCase(
             const std::string &a_name)
             : m_name( a_name)
@@ -35,6 +37,7 @@ namespace forth
           }
 
           const std::string &
+
           Name() const
           {
             return m_name;
@@ -62,12 +65,14 @@ namespace forth
           }
 
           const std::vector<Runtime::Cell> &
+
           GetInput() const
           {
             return m_input_stack;
           }
 
           const std::vector<Runtime::Cell> &
+
           GetOutput() const
           {
             return m_output_stack;
@@ -81,12 +86,14 @@ namespace forth
       };
 
       Tester();
+
       size_t
       CountTestCases() const;
 
     protected:
 
       std::vector<TestCase> m_test_case;
+
       void
       ParseFromStream(
         const char *  a_filename,

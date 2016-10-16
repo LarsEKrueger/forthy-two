@@ -4,6 +4,7 @@
 
 namespace forth
 {
+
   Tester::Tester()
   {
   }
