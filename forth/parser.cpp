@@ -9,7 +9,6 @@
 
 namespace forth
 {
-
   void
   Parser::ParseFromFile(
     const char * a_filename,
