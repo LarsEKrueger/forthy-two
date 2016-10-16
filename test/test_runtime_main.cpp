@@ -78,6 +78,7 @@ class TestRuntime : public forth::Runtime
       BOOST_CHECK( kIntrinsics[kOpCodeRead] == &IntrRead);
       BOOST_CHECK( kIntrinsics[kOpCodeExit] == &IntrExit);
     }
+
 };
 
 /// Tie the actual test into the framework
@@ -98,7 +99,6 @@ BOOST_AUTO_TEST_CASE(Basics)
   forth.PushReturn( 1);
   BOOST_CHECK_EQUAL( forth.TestReturnStackSize(), 2);
 }
-
 /// Test function for intrinsics with two operands
 static void
 TestIntrinsic2(
@@ -355,7 +355,6 @@ BOOST_AUTO_TEST_CASE(Looping)
 class TestParser : public forth::Parser
 {
   public:
-
     static void
     TestParseFromStream(
       const char *  a_filename,

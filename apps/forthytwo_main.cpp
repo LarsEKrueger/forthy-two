@@ -4,7 +4,6 @@
 
 #include <forth/runtime.hpp>
 #include <forth/parser.hpp>
-
 static void
 ErrorHelp(
   const char * msg)
@@ -31,7 +30,8 @@ ErrorHelp(
 
 int
 main(
-  int argc, char * * argv)
+  int argc,
+  char * * argv)
 {
   forth::Runtime forth;
 

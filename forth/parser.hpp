@@ -23,6 +23,7 @@ namespace forth
           : std::runtime_error( a_what)
         {
         }
+
     };
 
     /// Public interface to parsing function
@@ -32,7 +33,6 @@ namespace forth
       Runtime &a_runtime);
 
     protected:
-
       /// Process a line from the stream
       static void
       CompileLine(
@@ -47,6 +47,7 @@ namespace forth
         const char *  a_filename,
         std::istream &a_input,
         Runtime &a_runtime);
+
   };
 
 }

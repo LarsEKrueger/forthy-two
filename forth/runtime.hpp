@@ -95,6 +95,7 @@ namespace forth
             : std::runtime_error( a_what)
           {
           }
+
       };
 
       /// Construct a runtime instance
@@ -106,33 +107,40 @@ namespace forth
       /** Push a number onto the data stack. If the number is 42, interpret
        * the top-most item on the data stack as a line to call.
        */
-      void PushData(
+      void
+      PushData(
         Cell a_data);
 
       /** Push a number onto the data stack, no special treatment for number
        * 42.
        */
-      void PushDataNoExec(
+      void
+      PushDataNoExec(
         Cell a_data);
 
       /// Push a number onto the return stack
-      void PushReturn(
+      void
+      PushReturn(
         Cell a_data);
 
       /// Add a number to a given line
-      void Compile(
+      void
+      Compile(
         size_t a_row,
         Cell a_number);
 
       /// Set the instruction pointer to the first number in a given line
-      void ResetIp(
+      void
+      ResetIp(
         size_t a_line = kOpCodeFirstUser);
 
       /// Perform one step of computation.
-      void ComputeStep();
+      void
+      ComputeStep();
 
       /// Set the name of the source file for error messages.
-      void SetFileName(
+      void
+      SetFileName(
         const char * a_filename);
 
     protected:
@@ -147,15 +155,17 @@ namespace forth
 
       /// Program memory
       std::vector< std::vector< Cell> > m_program;
-
       /// Take one number from the data stack
-      Cell PopData();
+      Cell
+      PopData();
 
       /// Take one number from the return stack
-      size_t PopReturn();
+      size_t
+      PopReturn();
 
       /// Execute the opcode
-      void DoOpcode(
+      void
+      DoOpcode(
         Cell a_opCode);
 
       /// Prototype of a function to run an intrinsic
@@ -164,65 +174,79 @@ namespace forth
 
       /// Table of intrinsic
       static const Intrinsic kIntrinsics[];
-
       /// Intrinsic to add two numbers
-      static void IntrPlus(
+      static void
+      IntrPlus(
         Runtime &a_forth);
 
       /// Intrinsic to subtract two numbers
-      static void IntrMinus(
+      static void
+      IntrMinus(
         Runtime &a_forth);
 
       /// Intrinsic to multiply two numbers
-      static void IntrMult(
+      static void
+      IntrMult(
         Runtime &a_forth);
 
       /// Intrinsic to divide two numbers
-      static void IntrDiv(
+      static void
+      IntrDiv(
         Runtime &a_forth);
 
       /// Intrinsic to compute the modulus of two numbers
-      static void IntrMod(
+      static void
+      IntrMod(
         Runtime &a_forth);
 
       /// Intrinsic to compute the logical and
-      static void IntrAnd(
+      static void
+      IntrAnd(
         Runtime &a_forth);
 
       /// Intrinsic to compute the logical or
-      static void IntrOr(
+      static void
+      IntrOr(
         Runtime &a_forth);
 
       /// Intrinsic to compute the logical inversion
-      static void IntrNot(
+      static void
+      IntrNot(
         Runtime &a_forth);
 
       /// Intrinsic to swap the top two stack items
-      static void IntrSwap(
+      static void
+      IntrSwap(
         Runtime &a_forth);
 
       /// Intrinsic to duplicate the top stack item
-      static void IntrDup(
+      static void
+      IntrDup(
         Runtime &a_forth);
 
       /// Intrinsic to remove the top item from the data stack
-      static void IntrDrop(
+      static void
+      IntrDrop(
         Runtime &a_forth);
 
       /// Intrinsic to loop to the beginning of the line
-      static void IntrLoop(
+      static void
+      IntrLoop(
         Runtime &a_forth);
 
       /// Intrinsic to print a single character
-      static void IntrEmit(
+      static void
+      IntrEmit(
         Runtime &a_forth);
 
       /// Intrinsic to read a single character
-      static void IntrRead(
+      static void
+      IntrRead(
         Runtime &a_forth);
 
       /// Intrinsic to exit the program
-      static void IntrExit(
+      static void
+      IntrExit(
         Runtime &a_forth);
 
       /// Instruction pointer, the line we're currently executing

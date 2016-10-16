@@ -68,7 +68,6 @@ namespace forth
   {
 
   }
-
   void
   Runtime::PushData(
     Cell a_data)
@@ -83,14 +82,12 @@ namespace forth
     else
       PushDataNoExec( a_data);
   }
-
   void
   Runtime::PushDataNoExec(
     Cell a_data)
   {
     m_dataStack.push_back( a_data);
   }
-
   Runtime::Cell
   Runtime::PopData()
   {
@@ -106,14 +103,12 @@ namespace forth
     m_dataStack.pop_back();
     return res;
   }
-
   void
   Runtime::PushReturn(
     Cell a_data)
   {
     m_returnStack.push_back( a_data);
   }
-
   size_t
   Runtime::PopReturn()
   {
@@ -129,7 +124,6 @@ namespace forth
     m_returnStack.pop_back();
     return res;
   }
-
   void
   Runtime::Compile(
     size_t a_row,
@@ -145,7 +139,6 @@ namespace forth
       m_program[a_row].push_back( a_number);
     }
   }
-
   void
   Runtime::DoOpcode(
     Cell a_opCode)
@@ -168,7 +161,6 @@ namespace forth
       }
     }
   }
-
   void
   Runtime::ResetIp(
     size_t a_line)
@@ -176,7 +168,6 @@ namespace forth
     m_ipLine = a_line;
     m_ipCol = 0;
   }
-
   void
   Runtime::ComputeStep()
   {
@@ -208,7 +199,6 @@ namespace forth
       m_ipCol = 0;
     }
   }
-
   void
   Runtime::IntrPlus(
     Runtime &a_forth)
@@ -218,7 +208,6 @@ namespace forth
 
     a_forth.PushDataNoExec( a + b);
   }
-
   void
   Runtime::IntrMinus(
     Runtime &a_forth)
@@ -228,7 +217,6 @@ namespace forth
 
     a_forth.PushDataNoExec( b - a);
   }
-
   void
   Runtime::IntrMult(
     Runtime &a_forth)
@@ -238,7 +226,6 @@ namespace forth
 
     a_forth.PushDataNoExec( a * b);
   }
-
   void
   Runtime::IntrDiv(
     Runtime &a_forth)
@@ -248,7 +235,6 @@ namespace forth
 
     a_forth.PushDataNoExec( b / a);
   }
-
   void
   Runtime::IntrMod(
     Runtime &a_forth)
@@ -258,7 +244,6 @@ namespace forth
 
     a_forth.PushDataNoExec( b % a);
   }
-
   void
   Runtime::IntrAnd(
     Runtime &a_forth)
@@ -270,7 +255,6 @@ namespace forth
     // Push the result back
     a_forth.PushDataNoExec( (a && b) ? 1 : 0);
   }
-
   void
   Runtime::IntrOr(
     Runtime &a_forth)
@@ -280,7 +264,6 @@ namespace forth
 
     a_forth.PushDataNoExec( (a || b) ? 1 : 0);
   }
-
   void
   Runtime::IntrNot(
     Runtime &a_forth)
@@ -289,7 +272,6 @@ namespace forth
 
     a_forth.PushDataNoExec( (!a) ? 1 : 0);
   }
-
   void
   Runtime::IntrSwap(
     Runtime &a_forth)
@@ -300,7 +282,6 @@ namespace forth
     size_t tos1 = a_forth.m_dataStack.size() - 2;
     std::swap( a_forth.m_dataStack[tos1], a_forth.m_dataStack[tos1 + 1]);
   }
-
   void
   Runtime::IntrDup(
     Runtime &a_forth)
@@ -310,14 +291,12 @@ namespace forth
     size_t tos = a_forth.m_dataStack.size() - 1;
     a_forth.PushDataNoExec( a_forth.m_dataStack[tos]);
   }
-
   void
   Runtime::IntrDrop(
     Runtime &a_forth)
   {
     a_forth.PopData();
   }
-
   void
   Runtime::IntrLoop(
     Runtime &a_forth)
@@ -339,7 +318,6 @@ namespace forth
       a_forth.m_ipCol = 0;
     }
   }
-
   void
   Runtime::IntrEmit(
     Runtime &a_forth)
@@ -349,7 +327,6 @@ namespace forth
     if (0 <= v && v < 255)
       std::cout << char(v);
   }
-
   void
   Runtime::IntrRead(
     Runtime &a_forth)
@@ -361,7 +338,6 @@ namespace forth
     // We can't use PushData here or every * will trigger something
     a_forth.PushDataNoExec( c);
   }
-
   void
   Runtime::IntrExit(
     Runtime &a_forth)
@@ -370,11 +346,11 @@ namespace forth
 
     exit( v);
   }
-
   void
   Runtime::SetFileName(
     const char * a_filename)
   {
     m_filename = a_filename;
   }
+
 }
