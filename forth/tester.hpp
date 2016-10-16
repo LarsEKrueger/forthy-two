@@ -36,6 +36,7 @@ namespace forth
           {
           }
 
+          /// Get the name of the test case
           const std::string &
           Name() const
           {
