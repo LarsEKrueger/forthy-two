@@ -44,13 +44,12 @@ RunTestCases(
         test_case_ind < tester.CountTestCases();
         ++test_case_ind)
   {
-    std::cout << "  " << test_case_ind << "/" << tester.CountTestCases()
-              << std::endl;
     const forth::Tester::TestCase &test_case =
       tester.GetTestCase(
         test_case_ind);
 
-    size_t start_line = test_case.GetStartLine();
+    std::cout << "  " << test_case_ind << "/" << tester.CountTestCases()
+              << ": " << test_case.Name() << std::endl;
 
     forth::Runtime forth;
     forth::Parser::ParseFromFile( a_input_file_name, forth);
