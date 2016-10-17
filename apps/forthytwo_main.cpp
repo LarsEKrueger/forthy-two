@@ -1,6 +1,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include <forth/runtime.hpp>
 #include <forth/parser.hpp>
@@ -30,6 +31,18 @@ ErrorHelp(
   exit( EXIT_FAILURE);
 }
 
+class TestException : public std::runtime_error
+{
+  public:
+
+    TestException(
+      const char * a_what)
+      : std::runtime_error( a_what)
+    {
+    }
+
+};
+
 static void
 RunTestCases(
   const char * a_test_file_name,
@@ -57,6 +70,13 @@ RunTestCases(
 
     // Compile an additional line with the input stack and a call to the test function
     size_t line_count = forth.CountProgramLines();
+    size_t start_line = test_case.GetStartLine();
+    if (start_line >= line_count)
+    {
+      std::ostringstream str;
+      str << "Test case '" << test_case.Name() << "': Illegal start line";
+      throw TestException( str.str().c_str());
+    }
     const std::vector<forth::Runtime::Cell> &input = test_case.GetInput();
 
     for (size_t index = 0; index < input.size(); ++index)
@@ -75,7 +95,7 @@ RunTestCases(
     // Compare the data stack with the output stack of the test case
     bool result_identical = (forth.GetDataStack() == test_case.GetOutput());
     std::cout << "    " << (result_identical ? "pass" : "FAILED") <<
-    std::endl;
+      std::endl;
   }
 }
 
@@ -138,15 +158,16 @@ main(
       RunTestCases( test_file_name, inputFileName);
     else
       RunSource( inputFileName);
-
   }
   catch (const std::exception &ex)
   {
     std::cerr << ex.what() << std::endl;
+    return EXIT_FAILURE;
   }
   catch ( ...)
   {
     std::cerr << "Unknown exception caught" << std::endl;
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
