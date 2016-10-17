@@ -39,6 +39,7 @@ class TestRuntime : public forth::Runtime
     }
 
     const std::vector< std::vector< Cell > > &
+
     TestGetProgram() const
     {
       return m_program;
@@ -357,6 +358,7 @@ BOOST_AUTO_TEST_CASE(Looping)
 class TestParser : public forth::Parser
 {
   public:
+
     static void
     TestParseFromStream(
       const char *  a_filename,

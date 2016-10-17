@@ -39,6 +39,7 @@ namespace forth
 
           /// Get the name of the test case
           const std::string &
+
           Name() const
           {
             return m_name;
@@ -66,12 +67,14 @@ namespace forth
           }
 
           const std::vector<Runtime::Cell> &
+
           GetInput() const
           {
             return m_input_stack;
           }
 
           const std::vector<Runtime::Cell> &
+
           GetOutput() const
           {
             return m_output_stack;
