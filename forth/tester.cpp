@@ -162,4 +162,13 @@ namespace forth
     return m_test_case.size();
   }
 
+  const Tester::TestCase &
+
+  Tester::GetTestCase(
+    size_t a_index) const
+  {
+    assert( a_index < CountTestCases());
+    return m_test_case[ a_index];
+  }
+
 }

@@ -1,5 +1,6 @@
 #include "runtime.hpp"
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
 
@@ -380,6 +381,35 @@ namespace forth
     const char * a_filename)
   {
     m_filename = a_filename;
+  }
+
+  size_t
+  Runtime::CountProgramLines()
+  {
+    return m_program.size();
+  }
+
+  size_t
+  Runtime::CountInstructionsInLine(
+    size_t a_row)
+  {
+    assert( a_row < CountProgramLines());
+    return m_program[a_row].size();
+  }
+
+  bool
+  Runtime::IsIpAt(
+    size_t a_row,
+    size_t a_col)
+  {
+    return (m_ipLine == a_row) && (m_ipCol == a_col);
+  }
+
+  const std::vector<Runtime::Cell> &
+
+  Runtime::GetDataStack() const
+  {
+    return m_dataStack;
   }
 
 }

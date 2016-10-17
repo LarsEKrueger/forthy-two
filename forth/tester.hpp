@@ -52,6 +52,12 @@ namespace forth
             m_start_line = a_line;
           }
 
+          size_t
+          GetStartLine() const
+          {
+            return m_start_line;
+          }
+
           void
           AddInputNumber(
             Runtime::Cell a_nr)
@@ -95,6 +101,11 @@ namespace forth
 
       size_t
       CountTestCases() const;
+
+      const TestCase &
+
+      GetTestCase(
+        size_t a_index) const;
 
     protected:
 

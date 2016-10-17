@@ -144,6 +144,26 @@ namespace forth
       SetFileName(
         const char * a_filename);
 
+      /// Get the number of lines in the program
+      size_t
+      CountProgramLines();
+
+      /// Get the number of instructions in a line of the program
+      size_t
+      CountInstructionsInLine(
+        size_t a_row);
+
+      /// Check if the instruction pointer is at a row/column
+      bool
+      IsIpAt(
+        size_t a_row,
+        size_t a_col);
+
+      /// Access the data stack read-only
+      const std::vector<Cell> &
+
+      GetDataStack() const;
+
     protected:
 
       /// Return stack

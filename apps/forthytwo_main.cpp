@@ -38,20 +38,46 @@ RunTestCases(
   forth::Tester tester;
   tester.ParseFromFile( a_test_file_name);
 
-  for( size_t test_case_ind=0; test_case_ind < tester.CountTestCases(); ++test_case_ind)
+  std::cout << "Running tests ..." << std::endl;
+
+  for ( size_t test_case_ind = 0;
+        test_case_ind < tester.CountTestCases();
+        ++test_case_ind)
   {
+    std::cout << "  " << test_case_ind << "/" << tester.CountTestCases()
+              << std::endl;
+    const forth::Tester::TestCase &test_case =
+      tester.GetTestCase(
+        test_case_ind);
+
+    size_t start_line = test_case.GetStartLine();
+
     forth::Runtime forth;
     forth::Parser::ParseFromFile( a_input_file_name, forth);
     forth.SetFileName( a_input_file_name);
 
     // Compile an additional line with the input stack and a call to the test function
+    size_t line_count = forth.CountProgramLines();
+    const std::vector<forth::Runtime::Cell> &input = test_case.GetInput();
+
+    for (size_t index = 0; index < input.size(); ++index)
+      forth.Compile( line_count, input[index]);
+    forth.Compile( line_count, start_line);
+    forth.Compile( line_count, forth::Runtime::kOpCodeCall);
 
     // Run the program until we reach the last entry of the additional line
+    size_t ip_col = forth.CountInstructionsInLine( start_line);
+    forth.ResetIp( start_line);
+    while ( !forth.IsIpAt( start_line, ip_col) )
+    {
+      forth.ComputeStep();
+    }
 
     // Compare the data stack with the output stack of the test case
-
+    bool result_identical = (forth.GetDataStack() == test_case.GetOutput());
+    std::cout << "    " << (result_identical ? "pass" : "FAILED") <<
+    std::endl;
   }
-
 }
 
 static void
