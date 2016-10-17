@@ -43,7 +43,7 @@ class TestException : public std::runtime_error
 
 };
 
-static void
+static bool
 RunTestCases(
   const char * a_test_file_name,
   const char * a_input_file_name)
@@ -52,6 +52,8 @@ RunTestCases(
   tester.ParseFromFile( a_test_file_name);
 
   std::cout << "Running tests ..." << std::endl;
+
+  bool all_tests_ok = true;
 
   for ( size_t test_case_ind = 0;
         test_case_ind < tester.CountTestCases();
@@ -86,7 +88,7 @@ RunTestCases(
 
     // Run the program until we reach the last entry of the additional line
     size_t ip_col = forth.CountInstructionsInLine( start_line);
-    forth.ResetIp( start_line);
+    forth.ResetIp( line_count);
     while ( !forth.IsIpAt( start_line, ip_col) )
     {
       forth.ComputeStep();
@@ -96,7 +98,10 @@ RunTestCases(
     bool result_identical = (forth.GetDataStack() == test_case.GetOutput());
     std::cout << "    " << (result_identical ? "pass" : "FAILED") <<
       std::endl;
+
+      all_tests_ok &= result_identical;
   }
+  return all_tests_ok;
 }
 
 static void
@@ -155,7 +160,13 @@ main(
   try
   {
     if (test_file_name != 0)
-      RunTestCases( test_file_name, inputFileName);
+    {
+      if( !RunTestCases( test_file_name, inputFileName))
+      {
+        std::cerr << "AT LEAST ONE TEST FAILED!" << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
     else
       RunSource( inputFileName);
   }
