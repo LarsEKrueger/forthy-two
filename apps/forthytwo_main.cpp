@@ -63,7 +63,7 @@ RunTestCases(
       tester.GetTestCase(
         test_case_ind);
 
-    std::cout << "  " << test_case_ind << "/" << tester.CountTestCases()
+    std::cout << "  " << (test_case_ind+1) << "/" << tester.CountTestCases()
               << ": " << test_case.Name() << std::endl;
 
     forth::Runtime forth;
