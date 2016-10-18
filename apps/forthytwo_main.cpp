@@ -64,7 +64,8 @@ RunTestCases(
         test_case_ind);
 
     std::cout << "  " << (test_case_ind+1) << "/" << tester.CountTestCases()
-              << ": " << test_case.Name() << std::endl;
+              << ": " << test_case.Name() << " --> ";
+    std::cout.flush();
 
     forth::Runtime forth;
     forth::Parser::ParseFromFile( a_input_file_name, forth);
@@ -94,10 +95,26 @@ RunTestCases(
       forth.ComputeStep();
     }
 
+    const std::vector<forth::Runtime::Cell> &output = test_case.GetOutput();
+    const std::vector<forth::Runtime::Cell> &dataStack = forth.GetDataStack();
+
     // Compare the data stack with the output stack of the test case
-    bool result_identical = (forth.GetDataStack() == test_case.GetOutput());
+    bool result_identical = (dataStack == output);
     std::cout << "    " << (result_identical ? "pass" : "FAILED") <<
       std::endl;
+
+    if( !result_identical)
+    {
+      std::cout << "    Stack should be: [";
+      for( size_t i = 0; i < output.size(); ++i)
+       std::cout << output[i] << " ";
+      std::cout << "]" << std::endl;
+
+      std::cout << "    Stack is       : [";
+      for( size_t i = 0; i < dataStack.size(); ++i)
+       std::cout << dataStack[i] << " ";
+      std::cout << "]" << std::endl;
+    }
 
       all_tests_ok &= result_identical;
   }
