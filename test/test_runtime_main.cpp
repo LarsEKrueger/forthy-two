@@ -79,6 +79,7 @@ class TestRuntime : public forth::Runtime
       BOOST_CHECK( kIntrinsics[kOpCodeEmit] == &IntrEmit);
       BOOST_CHECK( kIntrinsics[kOpCodeRead] == &IntrRead);
       BOOST_CHECK( kIntrinsics[kOpCodeExit] == &IntrExit);
+      BOOST_CHECK( kIntrinsics[kOpCodeOver] == &IntrOver);
     }
 
 };
@@ -179,6 +180,7 @@ BOOST_AUTO_TEST_CASE(Intrinsics)
   TestIntrinsic1( 2, TestRuntime::kOpCodeNot, 0);
   TestIntrinsic1( 0, TestRuntime::kOpCodeNot, 1);
 }
+
 
 /// Test the compiler
 BOOST_AUTO_TEST_CASE(Compiler)
@@ -350,6 +352,24 @@ BOOST_AUTO_TEST_CASE(Looping)
   BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 1);
   BOOST_CHECK_EQUAL( forth.TestPopData(), 5 + 7 * 4);
 }
+
+/// Test the over instruction
+BOOST_AUTO_TEST_CASE(Over)
+{
+  TestRuntime forth;
+
+  forth.PushDataNoExec( 1);
+  forth.PushDataNoExec( 2);
+
+  forth.PushData( TestRuntime::kOpCodeOver);
+  forth.PushData( TestRuntime::kOpCodeCall);
+
+  BOOST_CHECK_EQUAL( forth.TestDataStackSize(), 3);
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 1);
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 2);
+  BOOST_CHECK_EQUAL( forth.TestPopData(), 1);
+}
+
 
 /** Interface to expose the protected methods in the parser class.
  * This is not in its own test file because we need access to the private

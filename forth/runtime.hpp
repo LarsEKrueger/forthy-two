@@ -79,6 +79,9 @@ namespace forth
       /// Opcode to exit the program
       static const Cell kOpCodeExit;
 
+      /// Opcode to duplicate the second item on the stack
+      static const Cell kOpCodeOver;
+
       /// Number of the first user-programmable line
       static const Cell kOpCodeFirstUser;
 
@@ -272,6 +275,11 @@ namespace forth
       static void
       IntrExit(
         Runtime &a_forth);
+
+        /// Intrinsic to duplicate the second item on the stack
+        static void
+        IntrOver(
+          Runtime &a_forth);
 
       /// Instruction pointer, the line we're currently executing
       size_t m_ipLine;

@@ -26,6 +26,8 @@ namespace forth
 
   const Runtime::Cell Runtime::kOpCodeExit = 14;
 
+  const Runtime::Cell Runtime::kOpCodeOver = 15;
+
   const Runtime::Cell Runtime::kOpCodeFirstUser = 21;
 
   const Runtime::Cell Runtime::kOpCodeCall = 42;
@@ -52,7 +54,8 @@ namespace forth
     IntrRead,
 
     IntrExit,
-    IntrExit,
+
+    IntrOver,
     IntrExit,
     IntrExit,
     IntrExit,
@@ -377,6 +380,19 @@ namespace forth
 
     exit( v);
   }
+
+  void
+  Runtime::IntrOver(
+    Runtime &a_forth)
+  {
+    if ( a_forth.m_dataStack.size() < 2)
+      throw StackUnderflow( "Over");
+
+    // Get the index of the value below the top of the stack
+    size_t tos1 = a_forth.m_dataStack.size() - 2;
+    a_forth.PushDataNoExec( a_forth.m_dataStack[tos1]);
+  }
+
 
   void
   Runtime::SetFileName(
