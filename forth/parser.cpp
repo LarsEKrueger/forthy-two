@@ -40,15 +40,7 @@ namespace forth
     if (firstNonSpace == std::string::npos)
       return;
 
-    // If the line starts with a hash mark, it's a comment and we can ignore
-    // it.
-    if (a_line.size() > 0)
-    {
-      if (a_line[0] == '#')
-        return;
-    }
-
-    // Seems like a legit line. Read the numbers one by one.
+        // Seems like a legit line. Read the numbers one by one.
     std::istringstream line( a_line);
     while ( !line.eof())
     {
@@ -57,21 +49,9 @@ namespace forth
       // If we can parse a number, it's a number
       if ( !(line >> v))
       {
-        // Drop the error state to look ahead
-        line.clear();
-
-        // Clear the buffer
-        char nextChars[CHARS_IN_ERROR + 1];
-        memset( nextChars, 0, sizeof(nextChars));
-
-        // Read some characters from the line
-        line.read( nextChars, CHARS_IN_ERROR);
-        std::ostringstream str;
-
-        // Build the error message
-        str << a_filename << "(" << a_lineNo << "): not a number at '" <<
-          nextChars << "'";
-        throw ParseError( str.str().c_str());
+        // If we can't parse a number, silently return
+        // We even keep the already parsed stuff
+        return;
       }
 
       // If everything worked, we add the number to the program

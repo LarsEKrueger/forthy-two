@@ -480,7 +480,7 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
   file << "   \t  " << std::endl;
 
   // 23: # Comment
-  file << "# Comment" << std::endl;
+  file << "Comment" << std::endl;
 
   // 24: 2 +
   file << "2 0 42" << std::endl;
@@ -489,7 +489,18 @@ BOOST_AUTO_TEST_CASE(ParseSpaceAndComments)
   file << "1 0 42" << std::endl;
 
   TestRuntime forth;
-  TestParser::TestParseFromStream( "file", file, forth);
+
+  bool hasCaughtAnException = false;
+  try
+  {
+    TestParser::TestParseFromStream( "file", file, forth);
+  }
+  catch (...)
+  {
+    hasCaughtAnException = true;
+  }
+
+  BOOST_REQUIRE_EQUAL( hasCaughtAnException, false);
 
   const std::vector< std::vector< TestRuntime::Cell > > &prg =
     forth.TestGetProgram();
@@ -544,19 +555,21 @@ BOOST_AUTO_TEST_CASE(ParseFail)
   file << "5  xx 9 " << std::endl;
 
   TestRuntime forth;
-  bool hasCaughtTheRightException = false;
+  bool hasCaughtAnException = false;
   try
   {
     TestParser::TestParseFromStream( "file", file, forth);
   }
-  catch ( forth::Parser::ParseError ex)
-  {
-    BOOST_REQUIRE_EQUAL( ex.what(), "file(21): not a number at 'xx 9 '");
-    hasCaughtTheRightException = true;
-  }
   catch (...)
   {
+    hasCaughtAnException = true;
   }
 
-  BOOST_CHECK( hasCaughtTheRightException);
+  BOOST_REQUIRE_EQUAL( hasCaughtAnException, false);
+  const std::vector< std::vector< TestRuntime::Cell > > &prg =
+    forth.TestGetProgram();
+
+  BOOST_REQUIRE_EQUAL( prg.size(), TestRuntime::kOpCodeFirstUser + 1);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser].size(), 1);
+  BOOST_CHECK_EQUAL( prg[TestRuntime::kOpCodeFirstUser][0], 5);
 }

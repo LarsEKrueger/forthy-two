@@ -20,14 +20,14 @@
 
 24 42 28 42 33 42 0 16 42
 
-# The next line prints "Hello " letter by letter
+                                  The next line prints "Hello " letter by letter
 72 12 42 101 12 42 108 9 42 12 42 12 42 111 12 42 32 12 42
 
 
-# Let's print "Susana" in a loop from the stack
+                                   Let's print "Susana" in a loop from the stack
 97 110 97 115 117 83 6 30 42
-# The next line is the print loop
+                                                 The next line is the print loop
 8 42 12 42 1 1 42 11 42
 
-# Print the new line
+                                                              Print the new line
 33 12 42 13 12 42 10 12 42
