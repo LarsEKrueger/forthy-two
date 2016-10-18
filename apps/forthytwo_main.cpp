@@ -159,7 +159,7 @@ main(
 
   try
   {
-    if (test_file_name != 0)
+    if (test_file_name != NULL)
     {
       if( !RunTestCases( test_file_name, inputFileName))
       {
