@@ -61,6 +61,8 @@ namespace forth
   };
 
   Runtime::Runtime()
+  : m_ipLine( kOpCodeFirstUser)
+  , m_ipCol( 0)
   {
 
   }
