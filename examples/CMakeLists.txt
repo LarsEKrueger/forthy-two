@@ -6,3 +6,4 @@ add_test(
 endfunction()
 
 DEFINE_TEST(bottles)
+DEFINE_TEST(euler1)

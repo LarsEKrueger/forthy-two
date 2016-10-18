@@ -1,0 +1,58 @@
+                                       Problem    _  _    __
+            _____      _                        _| || |_ /  |
+  Project  |  ___|    | |                      |_  __  _|`| |
+           | |__ _   _| | ___ _ __              _| || |_  | |
+           |  __| | | | |/ _ \ '__|            |_  __  _|_| |_
+           | |__| |_| | |  __/ |                 |_||_|  \___/
+           \____/\__,_|_|\___|_|
+
+
+            Multiples of 3 and 5
+
+            If we list all the natural numbers below 10 that are multiples of
+            3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+
+            Find the sum of all the multiples of 3 or 5 below 1000.
+
+
+
+
+# We start things at the next line
+58 42 0 999 35 42  38 42 45 42 0 14 42
+
+
+# print a zero terminated string
+9 42 7 42 7 42 2 2 42 10 0 42 42
+25 42 11 42
+
+# Convert a number to a zero terminated stack
+9 42 10 4 42 48 0 42 8 42 10 3 42
+29 42 11 42
+
+
+
+# Because 3 and 5 make 35, this line will be the main loop: dup isdiv35 ? 40 + call
+9 42 53 42 40 0 42 42        1 1 42 11 42
+
+# Print a number
+0 8 42 30 42 26 42
+# If/else lines for line #35
+
+8 42  15 42 0 42 8 42
+# This is the meaning of life
+
+# Print a line break
+13 12 42 10 12 42
+
+# Check if a number is divisible by another number
+4 42 7 42
+
+
+
+# Decide if a number is divisible by 3 or 5
+9 42 3 48 42 8 42 5 48 42 6 42
+
+
+
+# Print a nice message
+0 32 115 105 32 48 48 48 49 32 119 111 108 101 98 32 53 32 114 111 32 51 32 102 111 32 115 101 108 112 105 116 108 117 109 32 108 108 97 32 102 111 32 109 117 115 32 101 104 84 26 42

@@ -1,0 +1,45 @@
+# Printing functions test
+= Number to string conversion      .
+@ 30
+^ 0 1234
+v 0 52 51 50 49
+
+
+# Generic divisibility test
+= 12 is divisible by 4             .
+@ 48
+^ 12 4
+v 1
+
+# Test the accumulation part
+= Accumulation test                .
+@ 41
+^ 12 3
+v 15 3
+
+# Tests if number are divisible by 3 or 5
+= 9 is divisible by 3              .
+@ 53
+^ 9
+v 1
+
+= 100 is divisible by 5            .
+@ 53
+^ 100
+v 1
+
+= 17 is not divisible by 3 nor 5   .
+@ 53
+^ 17
+v 0
+
+= Result for numbers below 10      .
+@ 35
+^ 0 9
+v 23
+
+# Final test, do we get the correct result?
+= Final result                     .
+@ 35
+^ 0 999
+v 233168
