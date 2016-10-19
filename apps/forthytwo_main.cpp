@@ -63,7 +63,7 @@ RunTestCases(
       tester.GetTestCase(
         test_case_ind);
 
-    std::cout << "  " << (test_case_ind+1) << "/" << tester.CountTestCases()
+    std::cout << "  " << (test_case_ind + 1) << "/" << tester.CountTestCases()
               << ": " << test_case.Name() << " --> ";
     std::cout.flush();
 
@@ -103,20 +103,20 @@ RunTestCases(
     std::cout << "    " << (result_identical ? "pass" : "FAILED") <<
       std::endl;
 
-    if( !result_identical)
+    if ( !result_identical)
     {
       std::cout << "    Stack should be: [";
-      for( size_t i = 0; i < output.size(); ++i)
-       std::cout << output[i] << " ";
+      for ( size_t i = 0; i < output.size(); ++i)
+        std::cout << output[i] << " ";
       std::cout << "]" << std::endl;
 
       std::cout << "    Stack is       : [";
-      for( size_t i = 0; i < dataStack.size(); ++i)
-       std::cout << dataStack[i] << " ";
+      for ( size_t i = 0; i < dataStack.size(); ++i)
+        std::cout << dataStack[i] << " ";
       std::cout << "]" << std::endl;
     }
 
-      all_tests_ok &= result_identical;
+    all_tests_ok &= result_identical;
   }
   return all_tests_ok;
 }
@@ -178,7 +178,7 @@ main(
   {
     if (test_file_name != NULL)
     {
-      if( !RunTestCases( test_file_name, inputFileName))
+      if ( !RunTestCases( test_file_name, inputFileName))
       {
         std::cerr << "AT LEAST ONE TEST FAILED!" << std::endl;
         return EXIT_FAILURE;

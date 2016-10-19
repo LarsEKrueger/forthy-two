@@ -276,10 +276,10 @@ namespace forth
       IntrExit(
         Runtime &a_forth);
 
-        /// Intrinsic to duplicate the second item on the stack
-        static void
-        IntrOver(
-          Runtime &a_forth);
+      /// Intrinsic to duplicate the second item on the stack
+      static void
+      IntrOver(
+        Runtime &a_forth);
 
       /// Instruction pointer, the line we're currently executing
       size_t m_ipLine;

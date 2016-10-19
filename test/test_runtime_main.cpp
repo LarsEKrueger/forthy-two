@@ -181,7 +181,6 @@ BOOST_AUTO_TEST_CASE(Intrinsics)
   TestIntrinsic1( 0, TestRuntime::kOpCodeNot, 1);
 }
 
-
 /// Test the compiler
 BOOST_AUTO_TEST_CASE(Compiler)
 {
@@ -369,7 +368,6 @@ BOOST_AUTO_TEST_CASE(Over)
   BOOST_CHECK_EQUAL( forth.TestPopData(), 2);
   BOOST_CHECK_EQUAL( forth.TestPopData(), 1);
 }
-
 
 /** Interface to expose the protected methods in the parser class.
  * This is not in its own test file because we need access to the private

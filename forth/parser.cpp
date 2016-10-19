@@ -40,7 +40,7 @@ namespace forth
     if (firstNonSpace == std::string::npos)
       return;
 
-        // Seems like a legit line. Read the numbers one by one.
+    // Seems like a legit line. Read the numbers one by one.
     std::istringstream line( a_line);
     while ( !line.eof())
     {

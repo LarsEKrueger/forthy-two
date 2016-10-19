@@ -64,8 +64,8 @@ namespace forth
   };
 
   Runtime::Runtime()
-  : m_ipLine( kOpCodeFirstUser)
-  , m_ipCol( 0)
+    : m_ipLine( kOpCodeFirstUser)
+    , m_ipCol( 0)
   {
 
   }
@@ -392,7 +392,6 @@ namespace forth
     size_t tos1 = a_forth.m_dataStack.size() - 2;
     a_forth.PushDataNoExec( a_forth.m_dataStack[tos1]);
   }
-
 
   void
   Runtime::SetFileName(
