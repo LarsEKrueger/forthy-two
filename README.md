@@ -78,6 +78,17 @@ Should this be not enough to frighten you off, see the language reference
 manual in `doc/reference.md`. As soon as you understand the full extent of this
 language, you'll see Cthulhu on your toast. Or his lesser known brother, Bob.
 
+## What does the language actually look like?
+
+You're still reading? OK. You're curious what this language looks like? Hmm, OK. Get
+ready. Here it comes:
+
+    13 12 42 10 12 42
+
+Am I kidding? Nope. That's a valid function in **Forthy-Two**. What does it do? It prints a line break.
+
+That is all. There are no funny characters, no colorful pictures, no rhymes, just numbers. Disappointed? Good.
+
 <!---
 vim: fileencoding=utf-8 tw=0 spell spelllang=en wrap
 -->
