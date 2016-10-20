@@ -62,7 +62,7 @@ source code yet. At least not until you actually bought 99 bottles of beer.
 # Documentation
 The C++ code is documented using Doxygen. The HTML help will be built by
 
-    ./make.sh -x
+    doxygen
 
 Should you make the life-changing decision (which I assume, will not be for the
 better) to actually read the documentation, open `build/doc/html/index.html`.
