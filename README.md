@@ -72,11 +72,9 @@ better) to actually read the documentation, open `build/doc/html/index.html`.
 You don't actually want to program in this language. Ever. Trust me. I wrote it.
 
 If you want to understand why, see the tutorial in `doc/tutorial.md` for an
-introduction to the language.
-
-Should this be not enough to frighten you off, see the language reference
-manual in `doc/reference.md`. As soon as you understand the full extent of this
-language, you'll see Cthulhu on your toast. Or his lesser known brother, Bob.
+introduction to the language. As soon as you understand the full extent of
+this language, you'll see Cthulhu on your toast. Or his lesser known brother,
+Bob.
 
 ## What does the language actually look like?
 
