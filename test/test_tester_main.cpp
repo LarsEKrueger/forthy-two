@@ -4,6 +4,7 @@
 #include <forth/parser.hpp>
 #include <forth/tester.hpp>
 
+/// Helper class to gain public access to internals
 class TestTester : public forth::Tester
 {
   public:
@@ -87,6 +88,7 @@ BOOST_AUTO_TEST_CASE(GoodCase)
   BOOST_CHECK_EQUAL( tester.TestGetCase(1).GetOutput()[2], 5);
 }
 
+/// Test if parsing errors are found
 static void
 TestErrorMessage(
   const char * a_file_content,

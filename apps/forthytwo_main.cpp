@@ -31,6 +31,7 @@ ErrorHelp(
   exit( EXIT_FAILURE);
 }
 
+/// Exception to be thrown if something went wrong in test mode
 class TestException : public std::runtime_error
 {
   public:
@@ -43,6 +44,7 @@ class TestException : public std::runtime_error
 
 };
 
+/// Run all the test cases
 static bool
 RunTestCases(
   const char * a_test_file_name,
@@ -121,6 +123,7 @@ RunTestCases(
   return all_tests_ok;
 }
 
+/// Run the interpreter normally
 static void
 RunSource(
   const char * a_input_file_name)
@@ -142,6 +145,7 @@ main(
 {
   const char *  test_file_name = NULL;
 
+  // Parse the command line
   int opti = 1;
 
   while ( opti < argc)
