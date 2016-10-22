@@ -142,7 +142,7 @@ namespace forth
     Cell a_number)
   {
     // If it's a valid line
-    if ( a_row >= kOpCodeFirstUser && a_row != kOpCodeCall)
+    if ( a_row >= kOpCodeFirstUser)
     {
       // Resize the program memory if required
       if ( m_program.size() <= a_row)

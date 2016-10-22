@@ -79,8 +79,7 @@ namespace forth
         break;
 
       // If the line can be called, we process it
-      if ( lineNo >= Runtime::kOpCodeFirstUser &&
-           lineNo != Runtime::kOpCodeCall)
+      if ( lineNo >= Runtime::kOpCodeFirstUser)
       {
         CompileLine( a_filename, lineNo, line, a_runtime);
       }
