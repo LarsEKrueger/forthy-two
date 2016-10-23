@@ -379,6 +379,67 @@ and exit the loop (dropping the zero) or continue with the next character.
 
 Line 45 prints a newline character.
 
+## Test Driven Development and Unit Tests
+
+### Mechanics of Unit Testing
+
+You may ask how can one develop software with **Forthy-Two**? The answer is,
+of course, you do test driven development. Rather obvious answer, unless you
+skipped the headline.
+
+Now, how does this work exactly?
+
+The interpreter has a special test mode, which is controlled by a test
+specification file. If you run 
+
+    forthytwo --test examples/bottles.t42 examples/bottles.42
+
+the test specification will be read from `examples/bottles.t42` and executed.
+
+`examples/bottles.t42` looks like this:
+
+    # Test script for the 99 bottles of beer example
+    = Character conversion 1
+    @ 34
+    ^ 1234
+    v 52 123
+
+    = Character conversion 2
+    @ 34
+    ^ 4
+    v 52 0
+
+
+Here, it specifies two test cases. Each test case begins with setting a name
+for it. These are the lines beginning with `= `. All other lines are for the
+test case are optional. Also, the order isn't mandatory.
+
+The next line, starting with `@ ` specifies which line to call for the test
+case.
+
+The line starting with `^ ` specifies the contents of the data stack before
+calling the function under test.
+
+The line starting with `v ` specifies what the contests of the data stack are
+supposed to like after the function under test is finished. If the data stack
+differs from the supposed state, the test case fails.
+
+Keep in mind that there is no check if the test case specification and the
+source file match. One way to ensure that they do is to use the same base name
+and a script to run the tests.
+
+### Development Process
+
+The recommended development process is [Test Driven
+Development](https://en.wikipedia.org/wiki/Test-driven_development).
+Specifically, the following steps should be performed repeatedly until the
+program performs as expected:
+
+1. Add a test case to the `.t42` file.
+2. Run the tests
+3. Write the code in the `.42` file.
+
+You might want to write small functions that are easy to test.
 
 <!---
 vim: fileencoding=utf-8 tw=78 spell spelllang=en
