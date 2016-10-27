@@ -18,6 +18,11 @@ informal definition: *If a programming language can run a program that prints
 the famous '99 bottles of beer' poem, it is Turing Complete*. The program to
 do this is to be found in `examples/bottles.42`.
 
+The name derives from the programming language **FORTH** from which it takes
+its basic ideas and the number
+**forty-two** which plays an important role, both inside and outside the
+language.
+
 ## Computation Model
 
 Like many other esoteric programming languages, **Forthy-Two** is stack-based
